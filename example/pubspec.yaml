@@ -1,0 +1,18 @@
+name: http_client_hoc081098_example
+description: http_client_hoc081098_example
+publish_to: none
+version: 1.0.0-dev.0
+
+environment:
+  sdk: '>=2.17.0 <3.0.0'
+
+dependencies:
+  http: ^0.13.5
+  http_client_hoc081098: any
+
+dev_dependencies:
+  lints: ^2.0.0
+
+dependency_overrides:
+  http_client_hoc081098:
+    path: ../../http_client_hoc081098

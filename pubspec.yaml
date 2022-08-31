@@ -1,14 +1,16 @@
 name: http_client_hoc081098
-description: A starting point for Dart libraries or applications.
-version: 1.0.0
-# homepage: https://www.example.com
+description: Simple and powerful HTTP client for Flutter and Dart application.
+version: 1.0.0-dev.0
+homepage: https://github.com/hoc081098/http_client_hoc081098.git
+repository: https://github.com/hoc081098/http_client_hoc081098.git
+issue_tracker: https://github.com/hoc081098/http_client_hoc081098/issues
 
 environment:
-  sdk: '>=2.17.6 <3.0.0'
+  sdk: '>=2.12.0 <3.0.0'
 
 dependencies:
-  path: ^1.8.0
+  http: ^0.13.3
 
 dev_dependencies:
-  lints: ^2.0.0
-  test: ^1.16.0
+  lints: ^1.0.1
+  test: ^1.17.12
