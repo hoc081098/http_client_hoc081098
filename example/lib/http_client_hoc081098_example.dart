@@ -6,10 +6,11 @@ import 'package:http/http.dart' as http;
 void main() async {
   final loggingInterceptor = SimpleHttpClientLoggingInterceptor(
     DefaultSimpleHttpClientLogger(
-        level: SimpleHttpClientLogLevel.body,
-        headersToRedact: {
-          HttpHeaders.authorizationHeader,
-        }),
+      level: SimpleHttpClientLogLevel.body,
+      headersToRedact: {
+        HttpHeaders.authorizationHeader,
+      },
+    ),
   );
 
   final client = SimpleHttpClient(
