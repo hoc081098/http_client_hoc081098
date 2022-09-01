@@ -1,7 +1,10 @@
 import 'package:http/http.dart';
 
 /// TODO(docs)
-class SimpleHttpClientTimeoutException implements Exception {
+class SimpleHttpClientException implements Exception {}
+
+/// TODO(docs)
+class SimpleHttpClientTimeoutException extends SimpleHttpClientException {
   /// TODO(docs)
   final BaseRequest request;
 
@@ -23,7 +26,7 @@ class SimpleHttpClientTimeoutException implements Exception {
 }
 
 /// TODO(docs)
-class SimpleHttpClientException implements Exception {
+class SimpleHttpClientErrorResponseException extends SimpleHttpClientException {
   /// TODO(docs)
   final String errorResponseBody;
 
@@ -37,17 +40,18 @@ class SimpleHttpClientException implements Exception {
   Uri? get url => baseRequest?.url;
 
   /// TODO(docs)
-  SimpleHttpClientException(
+  SimpleHttpClientErrorResponseException(
       this.errorResponseBody, this.baseRequest, this.statusCode);
 
   @override
   String toString() =>
-      'SimpleHttpClientException{errorResponseBody: $errorResponseBody, baseRequest: $baseRequest, statusCode: $statusCode}';
+      'SimpleHttpClientErrorResponseException{errorResponseBody: $errorResponseBody,'
+      ' baseRequest: $baseRequest, statusCode: $statusCode}';
 
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is SimpleHttpClientException &&
+      other is SimpleHttpClientErrorResponseException &&
           runtimeType == other.runtimeType &&
           errorResponseBody == other.errorResponseBody &&
           baseRequest == other.baseRequest &&

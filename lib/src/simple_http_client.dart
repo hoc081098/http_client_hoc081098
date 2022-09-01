@@ -39,7 +39,7 @@ abstract class SimpleHttpClient extends http.BaseClient {
   /// Sends an HTTP GET request with the given headers to the given URL.
   /// Returns the resulting JSON object.
   ///
-  /// Can throw [SimpleHttpClientException] or [SimpleHttpClientTimeoutException].
+  /// Can throw [SimpleHttpClientException].
   Future<dynamic> getJson(
     Uri url, {
     Map<String, String>? headers,
@@ -214,7 +214,11 @@ class _DefaultSimpleHttpClient extends SimpleHttpClient {
       return jsonDecode(body);
     }
 
-    throw SimpleHttpClientException(body, response.request, statusCode);
+    throw SimpleHttpClientErrorResponseException(
+      body,
+      response.request,
+      statusCode,
+    );
   }
 
   static Object? _toEncodable(Object? nonEncodable) =>
