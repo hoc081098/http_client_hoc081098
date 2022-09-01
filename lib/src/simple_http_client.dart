@@ -17,6 +17,12 @@ typedef ResponseInterceptor = FutureOr<void> Function(
     http.BaseRequest request, http.Response response);
 
 /// TODO(docs)
+typedef JsonDecoderFunction = dynamic Function(String source);
+
+/// TODO(docs)
+typedef JsonEncoderFunction = String Function(Object? object);
+
+/// TODO(docs)
 @sealed
 abstract class SimpleHttpClient extends http.BaseClient {
   SimpleHttpClient._();
@@ -35,6 +41,9 @@ abstract class SimpleHttpClient extends http.BaseClient {
         requestInterceptors: requestInterceptors,
         responseInterceptors: responseInterceptors,
       );
+
+  @override
+  Future<http.StreamedResponse> send(http.BaseRequest request);
 
   /// Sends an HTTP GET request with the given headers to the given URL.
   /// Returns the resulting JSON object.
@@ -57,14 +66,14 @@ abstract class SimpleHttpClient extends http.BaseClient {
   Future<dynamic> postJson(
     Uri url, {
     Map<String, String>? headers,
-    Map<String, Object?>? body,
+    Map<String, dynamic>? body,
   });
 
   /// TODO(docs)
   Future<dynamic> putJson(
     Uri url, {
     Map<String, String>? headers,
-    Map<String, Object?>? body,
+    Map<String, dynamic>? body,
   });
 
   /// TODO(docs)
@@ -79,8 +88,11 @@ class _DefaultSimpleHttpClient extends SimpleHttpClient {
   final http.Client _client;
   final Duration? _timeout;
 
-  late final List<RequestInterceptor> _requestInterceptors;
-  late final List<ResponseInterceptor> _responseInterceptors;
+  final List<RequestInterceptor> _requestInterceptors;
+  final List<ResponseInterceptor> _responseInterceptors;
+
+  final JsonDecoderFunction _jsonDecoder;
+  final JsonEncoderFunction _jsonEncoder;
 
   /// TODO(docs)
   _DefaultSimpleHttpClient({
@@ -89,10 +101,14 @@ class _DefaultSimpleHttpClient extends SimpleHttpClient {
     List<RequestInterceptor> requestInterceptors = const <RequestInterceptor>[],
     List<ResponseInterceptor> responseInterceptors =
         const <ResponseInterceptor>[],
+    JsonDecoderFunction jsonDecoder = jsonDecode,
+    JsonEncoderFunction jsonEncoder = jsonEncode,
   })  : _client = client,
         _timeout = timeout,
         _requestInterceptors = List.unmodifiable(requestInterceptors),
         _responseInterceptors = List.unmodifiable(responseInterceptors),
+        _jsonDecoder = jsonDecoder,
+        _jsonEncoder = jsonEncoder,
         super._();
 
   @override
@@ -102,7 +118,7 @@ class _DefaultSimpleHttpClient extends SimpleHttpClient {
           ...?headers,
           HttpHeaders.contentTypeHeader: jsonContentType,
         },
-      ).then<dynamic>(_parseResult);
+      ).then<dynamic>(interceptAndParseJson);
 
   @override
   Future<dynamic> postMultipart(
@@ -121,14 +137,14 @@ class _DefaultSimpleHttpClient extends SimpleHttpClient {
 
     return send(request)
         .then((res) => http.Response.fromStream(res))
-        .then<dynamic>(_parseResult);
+        .then<dynamic>(interceptAndParseJson);
   }
 
   @override
   Future<dynamic> postJson(
     Uri url, {
     Map<String, String>? headers,
-    Map<String, Object?>? body,
+    Map<String, dynamic>? body,
   }) =>
       super
           .post(
@@ -137,15 +153,15 @@ class _DefaultSimpleHttpClient extends SimpleHttpClient {
               ...?headers,
               HttpHeaders.contentTypeHeader: jsonContentType,
             },
-            body: jsonEncode(body, toEncodable: _toEncodable),
+            body: bodyToString(body),
           )
-          .then<dynamic>(_parseResult);
+          .then<dynamic>(interceptAndParseJson);
 
   @override
   Future<dynamic> putJson(
     Uri url, {
     Map<String, String>? headers,
-    Map<String, Object?>? body,
+    Map<String, dynamic>? body,
   }) {
     return super
         .put(
@@ -154,15 +170,14 @@ class _DefaultSimpleHttpClient extends SimpleHttpClient {
             ...?headers,
             HttpHeaders.contentTypeHeader: jsonContentType,
           },
-          body:
-              body != null ? jsonEncode(body, toEncodable: _toEncodable) : null,
+          body: bodyToString(body),
         )
-        .then<dynamic>(_parseResult);
+        .then<dynamic>(interceptAndParseJson);
   }
 
   @override
   Future<dynamic> deleteJson(Uri url, {Map<String, String>? headers}) =>
-      super.delete(url, headers: headers).then<dynamic>(_parseResult);
+      super.delete(url, headers: headers).then<dynamic>(interceptAndParseJson);
 
   //
   //
@@ -170,11 +185,12 @@ class _DefaultSimpleHttpClient extends SimpleHttpClient {
 
   @override
   Future<http.StreamedResponse> send(http.BaseRequest request) async {
-    final interceptedRequest =
-        await _requestInterceptors.fold<Future<http.BaseRequest>>(
-      Future.value(request),
-      (acc, interceptor) => acc.then((req) => interceptor(req)),
-    );
+    final interceptedRequest = _requestInterceptors.isNotEmpty
+        ? request
+        : await _requestInterceptors.fold<Future<http.BaseRequest>>(
+            Future.value(request),
+            (acc, interceptor) => acc.then((req) => interceptor(req)),
+          );
 
     final responseFuture = _client.send(interceptedRequest);
     final response = _timeout != null
@@ -191,7 +207,7 @@ class _DefaultSimpleHttpClient extends SimpleHttpClient {
   //
   //
 
-  FutureOr<dynamic> _parseResult(http.Response response) {
+  FutureOr<dynamic> interceptAndParseJson(http.Response response) {
     final request = response.request;
 
     return _responseInterceptors.isNotEmpty && request != null
@@ -201,17 +217,17 @@ class _DefaultSimpleHttpClient extends SimpleHttpClient {
               (acc, interceptor) =>
                   acc.then((_) => interceptor(request, response)),
             )
-            .then<dynamic>((_) => _parseJsonOrThrow(response))
-        : _parseJsonOrThrow(response);
+            .then<dynamic>((_) => parseJsonOrThrow(response))
+        : parseJsonOrThrow(response);
   }
 
-  dynamic _parseJsonOrThrow(http.Response response) {
+  dynamic parseJsonOrThrow(http.Response response) {
     final statusCode = response.statusCode;
     final body = response.body;
 
     if (HttpStatus.ok <= statusCode &&
         statusCode <= HttpStatus.multipleChoices) {
-      return jsonDecode(body);
+      return _jsonDecoder(body);
     }
 
     throw SimpleHttpClientErrorResponseException(
@@ -221,6 +237,6 @@ class _DefaultSimpleHttpClient extends SimpleHttpClient {
     );
   }
 
-  static Object? _toEncodable(Object? nonEncodable) =>
-      nonEncodable is DateTime ? nonEncodable.toIso8601String() : nonEncodable;
+  String? bodyToString(Object? body) =>
+      body != null ? _jsonEncoder(body) : null;
 }
