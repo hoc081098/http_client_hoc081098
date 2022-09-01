@@ -1,12 +1,12 @@
-import 'package:http/http.dart';
+import 'package:http/http.dart' as http;
 
 /// TODO(docs)
 class SimpleHttpClientException implements Exception {}
 
 /// TODO(docs)
 class SimpleHttpClientTimeoutException extends SimpleHttpClientException {
-  /// TODO(docs)
-  final BaseRequest request;
+  /// The (frozen) request.
+  final http.BaseRequest request;
 
   /// TODO(docs)
   SimpleHttpClientTimeoutException(this.request);
@@ -27,37 +27,35 @@ class SimpleHttpClientTimeoutException extends SimpleHttpClientException {
 
 /// TODO(docs)
 class SimpleHttpClientErrorResponseException extends SimpleHttpClientException {
-  /// TODO(docs)
-  final String errorResponseBody;
+  /// The error response.
+  final http.Response response;
 
-  /// TODO(docs)
-  final BaseRequest? baseRequest;
+  /// The (frozen) request that triggered [response].
+  http.BaseRequest? get request => response.request;
 
-  /// TODO(docs)
-  final int statusCode;
+  /// The HTTP status code for [response].
+  int get statusCode => response.statusCode;
 
   /// The URL to which the request will be sent.
-  Uri? get url => baseRequest?.url;
+  Uri? get url => request?.url;
+
+  /// The error response body
+  String get errorResponseBody => response.body;
 
   /// TODO(docs)
-  SimpleHttpClientErrorResponseException(
-      this.errorResponseBody, this.baseRequest, this.statusCode);
-
-  @override
-  String toString() =>
-      'SimpleHttpClientErrorResponseException{errorResponseBody: $errorResponseBody,'
-      ' baseRequest: $baseRequest, statusCode: $statusCode}';
+  SimpleHttpClientErrorResponseException(this.response);
 
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is SimpleHttpClientErrorResponseException &&
           runtimeType == other.runtimeType &&
-          errorResponseBody == other.errorResponseBody &&
-          baseRequest == other.baseRequest &&
-          statusCode == other.statusCode;
+          response == other.response;
 
   @override
-  int get hashCode =>
-      errorResponseBody.hashCode ^ baseRequest.hashCode ^ statusCode.hashCode;
+  int get hashCode => response.hashCode;
+
+  @override
+  String toString() =>
+      'SimpleHttpClientErrorResponseException{response: $response}';
 }

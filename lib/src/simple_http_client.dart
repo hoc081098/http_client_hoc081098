@@ -199,7 +199,8 @@ class _DefaultSimpleHttpClient extends SimpleHttpClient {
     final response = _timeout != null
         ? await responseFuture.timeout(
             _timeout!,
-            onTimeout: () => throw SimpleHttpClientTimeoutException(request),
+            onTimeout: () =>
+                throw SimpleHttpClientTimeoutException(interceptedRequest),
           )
         : await responseFuture;
 
@@ -234,11 +235,7 @@ class _DefaultSimpleHttpClient extends SimpleHttpClient {
       return _jsonDecoder(body);
     }
 
-    throw SimpleHttpClientErrorResponseException(
-      body,
-      response.request,
-      statusCode,
-    );
+    throw SimpleHttpClientErrorResponseException(response);
   }
 
   String? bodyToString(Object? body) =>
