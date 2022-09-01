@@ -30,16 +30,20 @@ abstract class SimpleHttpClient extends http.BaseClient {
   /// TODO(docs)
   factory SimpleHttpClient({
     required http.Client client,
-    required Duration? timeout,
+    Duration? timeout,
     List<RequestInterceptor> requestInterceptors = const <RequestInterceptor>[],
     List<ResponseInterceptor> responseInterceptors =
         const <ResponseInterceptor>[],
+    JsonDecoderFunction jsonDecoder = jsonDecode,
+    JsonEncoderFunction jsonEncoder = jsonEncode,
   }) =>
       _DefaultSimpleHttpClient(
         client: client,
         timeout: timeout,
         requestInterceptors: requestInterceptors,
         responseInterceptors: responseInterceptors,
+        jsonDecoder: jsonDecoder,
+        jsonEncoder: jsonEncoder,
       );
 
   @override
@@ -98,11 +102,10 @@ class _DefaultSimpleHttpClient extends SimpleHttpClient {
   _DefaultSimpleHttpClient({
     required http.Client client,
     required Duration? timeout,
-    List<RequestInterceptor> requestInterceptors = const <RequestInterceptor>[],
-    List<ResponseInterceptor> responseInterceptors =
-        const <ResponseInterceptor>[],
-    JsonDecoderFunction jsonDecoder = jsonDecode,
-    JsonEncoderFunction jsonEncoder = jsonEncode,
+    required List<RequestInterceptor> requestInterceptors,
+    required List<ResponseInterceptor> responseInterceptors,
+    required JsonDecoderFunction jsonDecoder,
+    required JsonEncoderFunction jsonEncoder,
   })  : _client = client,
         _timeout = timeout,
         _requestInterceptors = List.unmodifiable(requestInterceptors),
@@ -208,6 +211,7 @@ class _DefaultSimpleHttpClient extends SimpleHttpClient {
   //
 
   FutureOr<dynamic> interceptAndParseJson(http.Response response) {
+    /// TODO: https://github.com/dart-lang/http/issues/782: cupertino_http: BaseResponse.request is null
     final request = response.request;
 
     return _responseInterceptors.isNotEmpty && request != null
