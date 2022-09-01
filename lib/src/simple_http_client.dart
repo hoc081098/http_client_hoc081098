@@ -185,7 +185,7 @@ class _DefaultSimpleHttpClient extends SimpleHttpClient {
 
   @override
   Future<http.StreamedResponse> send(http.BaseRequest request) async {
-    final interceptedRequest = _requestInterceptors.isNotEmpty
+    final interceptedRequest = _requestInterceptors.isEmpty
         ? request
         : await _requestInterceptors.fold<Future<http.BaseRequest>>(
             Future.value(request),
