@@ -16,12 +16,14 @@ class SimpleHttpClientLoggingInterceptor {
   SimpleHttpClientLoggingInterceptor(this.logger);
 
   /// A [RequestInterceptor] which logs request information.
+  /// It should be the last in the chain of interceptors.
   late final RequestInterceptor requestInterceptor = (request) {
     logger.logRequest(request);
     return request;
   };
 
   /// A [ResponseInterceptor] which logs response information.
+  /// It should be the first in the chain of interceptors.
   late final ResponseInterceptor responseInterceptor =
       (_, response) => logger.logResponse(response);
 }
