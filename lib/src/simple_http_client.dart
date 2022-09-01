@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:http/http.dart' as http;
+import 'package:meta/meta.dart';
 
 import '../http_client_hoc081098.dart';
 import 'exception.dart';
@@ -16,7 +17,65 @@ typedef ResponseInterceptor = FutureOr<void> Function(
     http.BaseRequest request, http.Response response);
 
 /// TODO(docs)
-class SimpleHttpClient extends http.BaseClient {
+@sealed
+abstract class SimpleHttpClient extends http.BaseClient {
+  SimpleHttpClient._();
+
+  /// TODO(docs)
+  factory SimpleHttpClient({
+    required http.Client client,
+    required Duration? timeout,
+    List<RequestInterceptor> requestInterceptors = const <RequestInterceptor>[],
+    List<ResponseInterceptor> responseInterceptors =
+        const <ResponseInterceptor>[],
+  }) =>
+      _DefaultSimpleHttpClient(
+        client: client,
+        timeout: timeout,
+        requestInterceptors: requestInterceptors,
+        responseInterceptors: responseInterceptors,
+      );
+
+  /// Sends an HTTP GET request with the given headers to the given URL.
+  /// Returns the resulting JSON object.
+  ///
+  /// Can throw [SimpleHttpClientException] or [SimpleHttpClientTimeoutException].
+  Future<dynamic> getJson(
+    Uri url, {
+    Map<String, String>? headers,
+  });
+
+  /// TODO(docs)
+  Future<dynamic> postMultipart(
+    Uri url,
+    List<http.MultipartFile> files, {
+    Map<String, String>? headers,
+    Map<String, String>? fields,
+  });
+
+  /// TODO(docs)
+  Future<dynamic> postJson(
+    Uri url, {
+    Map<String, String>? headers,
+    Map<String, Object?>? body,
+  });
+
+  /// TODO(docs)
+  Future<dynamic> putJson(
+    Uri url, {
+    Map<String, String>? headers,
+    Map<String, Object?>? body,
+  });
+
+  /// TODO(docs)
+  Future<dynamic> deleteJson(Uri url, {Map<String, String>? headers});
+}
+
+/// TODO(docs)
+class _DefaultSimpleHttpClient extends SimpleHttpClient {
+  /// JSON content type.
+  static const jsonContentType = 'application/json; charset=utf-8';
+
   final http.Client _client;
   final Duration? _timeout;
 
@@ -24,7 +83,7 @@ class SimpleHttpClient extends http.BaseClient {
   late final List<ResponseInterceptor> _responseInterceptors;
 
   /// TODO(docs)
-  SimpleHttpClient({
+  _DefaultSimpleHttpClient({
     required http.Client client,
     required Duration? timeout,
     List<RequestInterceptor> requestInterceptors = const <RequestInterceptor>[],
@@ -33,20 +92,19 @@ class SimpleHttpClient extends http.BaseClient {
   })  : _client = client,
         _timeout = timeout,
         _requestInterceptors = List.unmodifiable(requestInterceptors),
-        _responseInterceptors = List.unmodifiable(responseInterceptors);
+        _responseInterceptors = List.unmodifiable(responseInterceptors),
+        super._();
 
-  /// Sends an HTTP GET request with the given headers to the given URL, which can be a Uri or a String.
-  /// Returns the resulting Json object.
-  /// Throws [AppClientHttpException].
+  @override
   Future<dynamic> getJson(Uri url, {Map<String, String>? headers}) => super.get(
         url,
         headers: {
           ...?headers,
-          HttpHeaders.contentTypeHeader: 'application/json; charset=utf-8',
+          HttpHeaders.contentTypeHeader: jsonContentType,
         },
       ).then<dynamic>(_parseResult);
 
-  /// TODO(docs)
+  @override
   Future<dynamic> postMultipart(
     Uri url,
     List<http.MultipartFile> files, {
@@ -66,7 +124,7 @@ class SimpleHttpClient extends http.BaseClient {
         .then<dynamic>(_parseResult);
   }
 
-  /// TODO(docs)
+  @override
   Future<dynamic> postJson(
     Uri url, {
     Map<String, String>? headers,
@@ -77,13 +135,13 @@ class SimpleHttpClient extends http.BaseClient {
             url,
             headers: {
               ...?headers,
-              HttpHeaders.contentTypeHeader: 'application/json; charset=utf-8',
+              HttpHeaders.contentTypeHeader: jsonContentType,
             },
             body: jsonEncode(body, toEncodable: _toEncodable),
           )
           .then<dynamic>(_parseResult);
 
-  /// TODO(docs)
+  @override
   Future<dynamic> putJson(
     Uri url, {
     Map<String, String>? headers,
@@ -94,7 +152,7 @@ class SimpleHttpClient extends http.BaseClient {
           url,
           headers: {
             ...?headers,
-            HttpHeaders.contentTypeHeader: 'application/json; charset=utf-8',
+            HttpHeaders.contentTypeHeader: jsonContentType,
           },
           body:
               body != null ? jsonEncode(body, toEncodable: _toEncodable) : null,
@@ -102,7 +160,7 @@ class SimpleHttpClient extends http.BaseClient {
         .then<dynamic>(_parseResult);
   }
 
-  /// TODO(docs)
+  @override
   Future<dynamic> deleteJson(Uri url, {Map<String, String>? headers}) =>
       super.delete(url, headers: headers).then<dynamic>(_parseResult);
 
