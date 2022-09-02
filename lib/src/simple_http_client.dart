@@ -223,29 +223,29 @@ class _DefaultSimpleHttpClient extends BaseClient implements SimpleHttpClient {
             requestFuture(request, cancelToken),
             (acc, interceptor) {
               return acc.then((req) {
-                cancelToken?.guard(StackTrace.current);
+                cancelToken?.guard();
                 return interceptor(req);
               });
             },
           );
 
-    cancelToken?.guard(StackTrace.current);
+    cancelToken?.guard();
 
     final responseFuture = _client.send(interceptedRequest);
 
-    cancelToken?.guard(StackTrace.current);
+    cancelToken?.guard();
 
     final response = _timeout != null
         ? await responseFuture.timeout(
             _timeout!,
             onTimeout: () {
-              cancelToken?.guard(StackTrace.current);
+              cancelToken?.guard();
               throw SimpleHttpClientTimeoutException(interceptedRequest);
             },
           )
         : await responseFuture;
 
-    cancelToken?.guard(StackTrace.current);
+    cancelToken?.guard();
 
     return response;
   }
@@ -266,12 +266,12 @@ class _DefaultSimpleHttpClient extends BaseClient implements SimpleHttpClient {
                 .fold<Future<void>>(
                 requestFuture(request, cancelToken),
                 (acc, interceptor) => acc.then((_) {
-                  cancelToken?.guard(StackTrace.current);
+                  cancelToken?.guard();
                   return interceptor(request, response);
                 }),
               )
                 .then<dynamic>((_) {
-                cancelToken?.guard(StackTrace.current);
+                cancelToken?.guard();
                 return parseJsonOrThrow(response);
               })
             : parseJsonOrThrow(response);
@@ -294,7 +294,7 @@ class _DefaultSimpleHttpClient extends BaseClient implements SimpleHttpClient {
 
   static Future<http.BaseRequest> requestFuture(
       http.BaseRequest request, CancellationToken? cancelToken) {
-    cancelToken?.guard(StackTrace.current);
+    cancelToken?.guard();
     return Future.value(request);
   }
 }

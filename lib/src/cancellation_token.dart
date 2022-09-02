@@ -24,23 +24,21 @@ class CancellationToken {
     _completers = null;
 
     for (final completer in completers) {
-      completer.completeError(
-          SimpleHttpClientCancellationException(StackTrace.current));
+      completer.completeError(const SimpleHttpClientCancellationException());
     }
   }
 
   /// throw [SimpleHttpClientCancellationException] if this was cancelled.
   @internal
-  void guard(StackTrace stackTrace) {
+  void guard() {
     if (_isCancelled) {
-      throw SimpleHttpClientCancellationException(stackTrace);
+      throw const SimpleHttpClientCancellationException();
     }
   }
 
   void _addCompleter(Completer<Never> completer) {
     if (_isCancelled) {
-      completer.completeError(
-          SimpleHttpClientCancellationException(StackTrace.current));
+      completer.completeError(const SimpleHttpClientCancellationException());
     } else {
       _completers?.add(completer);
     }
@@ -55,8 +53,7 @@ class CancellationToken {
 @internal
 Stream<Never> onCancel(CancellationToken token) {
   if (token.isCancelled) {
-    return Stream.error(
-        SimpleHttpClientCancellationException(StackTrace.current));
+    return Stream.error(const SimpleHttpClientCancellationException());
   }
 
   final controller = StreamController<Never>(sync: true);
@@ -64,8 +61,7 @@ Stream<Never> onCancel(CancellationToken token) {
   StreamSubscription<Never>? subscription;
 
   void emitAndClose() {
-    controller
-        .addError(SimpleHttpClientCancellationException(StackTrace.current));
+    controller.addError(const SimpleHttpClientCancellationException());
     controller.close();
   }
 
@@ -112,8 +108,7 @@ Future<T> cancellationGuard<T>(
   }
 
   if (token.isCancelled) {
-    return Future.error(
-        SimpleHttpClientCancellationException(StackTrace.current));
+    return Future.error(const SimpleHttpClientCancellationException());
   }
 
   final completer = Completer<Never>();

@@ -36,7 +36,7 @@ void main() {
 
           list.add(2);
 
-          token.guard(StackTrace.current);
+          token.guard();
 
           list.add(3);
 
@@ -44,7 +44,7 @@ void main() {
 
           list.add(4);
 
-          token.guard(StackTrace.current);
+          token.guard();
 
           await Future<void>.delayed(const Duration(milliseconds: 500));
 

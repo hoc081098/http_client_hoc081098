@@ -64,12 +64,18 @@ class SimpleHttpClientErrorResponseException extends SimpleHttpClientException {
 
 /// TODO(docs)
 class SimpleHttpClientCancellationException extends SimpleHttpClientException {
-  final StackTrace stackTrace;
-
   /// TODO(docs)
-  SimpleHttpClientCancellationException(this.stackTrace) : super._();
+  const SimpleHttpClientCancellationException() : super._();
 
   @override
-  String toString() =>
-      'SimpleHttpClientCancellationException{stackTrace: $stackTrace}';
+  String toString() => 'SimpleHttpClientCancellationException{}';
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is SimpleHttpClientCancellationException &&
+          runtimeType == other.runtimeType;
+
+  @override
+  int get hashCode => 0;
 }

@@ -164,15 +164,15 @@ abstract class BaseClient {
             return send(request, null).then(http.Response.fromStream);
           }
 
-          cancelToken.guard(StackTrace.current);
+          cancelToken.guard();
 
           final streamedResponse = await send(request, cancelToken);
 
-          cancelToken.guard(StackTrace.current);
+          cancelToken.guard();
 
           final response = await _fromStream(streamedResponse, cancelToken);
 
-          cancelToken.guard(StackTrace.current);
+          cancelToken.guard();
 
           return response;
         },
@@ -195,11 +195,11 @@ Future<http.Response> _fromStream(
   http.StreamedResponse response,
   CancellationToken cancelToken,
 ) async {
-  cancelToken.guard(StackTrace.current);
+  cancelToken.guard();
 
   final body = await _toBytes(response.stream, cancelToken);
 
-  cancelToken.guard(StackTrace.current);
+  cancelToken.guard();
 
   return http.Response.bytes(body, response.statusCode,
       request: response.request,
