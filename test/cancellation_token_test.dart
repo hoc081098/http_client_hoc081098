@@ -31,12 +31,25 @@ void main() {
         final token = CancellationToken();
         final future = cancellationGuard(token, () async {
           list.add(1);
+
           await Future<void>.delayed(const Duration(milliseconds: 100));
+
           list.add(2);
+
           token.guard(StackTrace.current);
+
           list.add(3);
+
           await Future<void>.delayed(const Duration(milliseconds: 500));
+
           list.add(4);
+
+          token.guard(StackTrace.current);
+
+          await Future<void>.delayed(const Duration(milliseconds: 500));
+
+          list.add(5);
+
           return 42;
         });
 
@@ -45,7 +58,7 @@ void main() {
 
         await expectLater(
             future, throwsA(isA<SimpleHttpClientCancellationException>()));
-        print(list);
+        expect(list, [1, 2, 3]);
       });
     });
   });
