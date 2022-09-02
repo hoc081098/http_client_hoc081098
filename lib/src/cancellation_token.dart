@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:meta/meta.dart';
+import 'package:rxdart_ext/single.dart';
 
 import '../http_client_hoc081098.dart';
 
@@ -46,6 +47,35 @@ class CancellationToken {
 
   void _removeCompleter(Completer<void> completer) =>
       _completers?.remove(completer);
+}
+
+/// TODO(docs)
+Single<T> useCancellationToken<T>(
+    Future<T> Function(CancellationToken cancelToken) block) {
+  final controller = StreamController<T>(sync: true);
+
+  CancellationToken? cancelToken;
+  StreamSubscription<T>? subscription;
+
+  controller.onListen = () {
+    subscription = block(cancelToken = CancellationToken()).asStream().listen(
+          controller.add,
+          onError: controller.addError,
+          onDone: controller.close,
+        );
+  };
+  controller.onCancel = () {
+    final future = subscription?.cancel();
+    subscription = null;
+
+    cancelToken?.cancel();
+    cancelToken = null;
+
+    return future;
+  };
+
+  // ignore: invalid_use_of_internal_member
+  return Single.safe(controller.stream);
 }
 
 /// Returns a Stream that emits a [SimpleHttpClientCancellationException] as error event

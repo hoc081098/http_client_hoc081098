@@ -42,7 +42,31 @@ void main() async {
     print('Cancelling...');
   }();
 
-  final json = await client.getJson(uri, headers: {}, cancelToken: cancelToken)
-      as Map<String, dynamic>;
-  print(json);
+  try {
+    final json = await client.getJson(uri,
+        headers: {}, cancelToken: cancelToken) as Map<String, dynamic>;
+    print(json);
+  } catch (e) {
+    print(e);
+  }
+
+  print('-' * 128);
+
+  final single = useCancellationToken<dynamic>(
+    (cancelToken) => client.getJson(
+      Uri.parse('https://jsonplaceholder.typicode.com/users/2'),
+      headers: {},
+      cancelToken: cancelToken,
+    ),
+  ).cast<Map<String, dynamic>>();
+  final subscription = single.listen(print, onError: print);
+
+  // ignore: unawaited_futures
+  () async {
+    await Future<void>.delayed(const Duration(milliseconds: 120));
+    await subscription.cancel();
+    print('Cancelling single...');
+  }();
+
+  await Future<void>.delayed(const Duration(seconds: 1));
 }
