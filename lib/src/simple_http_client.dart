@@ -5,7 +5,8 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:meta/meta.dart';
 
-import '../http_client_hoc081098.dart';
+import 'base.dart';
+import 'cancellation_token.dart';
 import 'exception.dart';
 
 /// TODO(docs)
@@ -24,9 +25,7 @@ typedef JsonEncoderFunction = String Function(Object? object);
 
 /// TODO(docs)
 @sealed
-abstract class SimpleHttpClient extends http.BaseClient {
-  SimpleHttpClient._();
-
+abstract class SimpleHttpClient {
   /// TODO(docs)
   factory SimpleHttpClient({
     required http.Client client,
@@ -46,8 +45,11 @@ abstract class SimpleHttpClient extends http.BaseClient {
         jsonEncoder: jsonEncoder,
       );
 
-  @override
-  Future<http.StreamedResponse> send(http.BaseRequest request);
+  /// TODO(docs)
+  Future<http.StreamedResponse> send(
+    http.BaseRequest request,
+    CancellationToken? cancelToken,
+  );
 
   /// Sends an HTTP GET request with the given headers to the given URL.
   /// Returns the resulting JSON object.
@@ -56,6 +58,7 @@ abstract class SimpleHttpClient extends http.BaseClient {
   Future<dynamic> getJson(
     Uri url, {
     Map<String, String>? headers,
+    CancellationToken? cancelToken,
   });
 
   /// TODO(docs)
@@ -64,6 +67,7 @@ abstract class SimpleHttpClient extends http.BaseClient {
     List<http.MultipartFile> files, {
     Map<String, String>? headers,
     Map<String, String>? fields,
+    CancellationToken? cancelToken,
   });
 
   /// TODO(docs)
@@ -71,6 +75,7 @@ abstract class SimpleHttpClient extends http.BaseClient {
     Uri url, {
     Map<String, String>? headers,
     Map<String, dynamic>? body,
+    CancellationToken? cancelToken,
   });
 
   /// TODO(docs)
@@ -78,14 +83,19 @@ abstract class SimpleHttpClient extends http.BaseClient {
     Uri url, {
     Map<String, String>? headers,
     Map<String, dynamic>? body,
+    CancellationToken? cancelToken,
   });
 
   /// TODO(docs)
-  Future<dynamic> deleteJson(Uri url, {Map<String, String>? headers});
+  Future<dynamic> deleteJson(
+    Uri url, {
+    Map<String, String>? headers,
+    CancellationToken? cancelToken,
+  });
 }
 
 /// TODO(docs)
-class _DefaultSimpleHttpClient extends SimpleHttpClient {
+class _DefaultSimpleHttpClient extends BaseClient implements SimpleHttpClient {
   /// JSON content type.
   static const jsonContentType = 'application/json; charset=utf-8';
 
@@ -111,17 +121,22 @@ class _DefaultSimpleHttpClient extends SimpleHttpClient {
         _requestInterceptors = List.unmodifiable(requestInterceptors),
         _responseInterceptors = List.unmodifiable(responseInterceptors),
         _jsonDecoder = jsonDecoder,
-        _jsonEncoder = jsonEncoder,
-        super._();
+        _jsonEncoder = jsonEncoder;
 
   @override
-  Future<dynamic> getJson(Uri url, {Map<String, String>? headers}) => super.get(
+  Future<dynamic> getJson(
+    Uri url, {
+    Map<String, String>? headers,
+    CancellationToken? cancelToken,
+  }) =>
+      super.get(
         url,
+        cancelToken,
         headers: {
           ...?headers,
           HttpHeaders.contentTypeHeader: jsonContentType,
         },
-      ).then<dynamic>(interceptAndParseJson);
+      ).then<dynamic>(interceptAndParseJson(cancelToken));
 
   @override
   Future<dynamic> postMultipart(
@@ -129,6 +144,7 @@ class _DefaultSimpleHttpClient extends SimpleHttpClient {
     List<http.MultipartFile> files, {
     Map<String, String>? headers,
     Map<String, String>? fields,
+    CancellationToken? cancelToken,
   }) {
     final request = http.MultipartRequest('POST', url)
       ..fields.addAll(fields ?? const <String, String>{})
@@ -138,9 +154,9 @@ class _DefaultSimpleHttpClient extends SimpleHttpClient {
         HttpHeaders.contentTypeHeader: 'multipart/form-data',
       });
 
-    return send(request)
+    return send(request, cancelToken)
         .then((res) => http.Response.fromStream(res))
-        .then<dynamic>(interceptAndParseJson);
+        .then<dynamic>(interceptAndParseJson(cancelToken));
   }
 
   @override
@@ -148,61 +164,88 @@ class _DefaultSimpleHttpClient extends SimpleHttpClient {
     Uri url, {
     Map<String, String>? headers,
     Map<String, dynamic>? body,
+    CancellationToken? cancelToken,
   }) =>
       super
           .post(
             url,
+            cancelToken,
             headers: {
               ...?headers,
               HttpHeaders.contentTypeHeader: jsonContentType,
             },
             body: bodyToString(body),
           )
-          .then<dynamic>(interceptAndParseJson);
+          .then<dynamic>(interceptAndParseJson(cancelToken));
 
   @override
   Future<dynamic> putJson(
     Uri url, {
     Map<String, String>? headers,
     Map<String, dynamic>? body,
+    CancellationToken? cancelToken,
   }) {
     return super
         .put(
           url,
+          cancelToken,
           headers: {
             ...?headers,
             HttpHeaders.contentTypeHeader: jsonContentType,
           },
           body: bodyToString(body),
         )
-        .then<dynamic>(interceptAndParseJson);
+        .then<dynamic>(interceptAndParseJson(cancelToken));
   }
 
   @override
-  Future<dynamic> deleteJson(Uri url, {Map<String, String>? headers}) =>
-      super.delete(url, headers: headers).then<dynamic>(interceptAndParseJson);
+  Future<dynamic> deleteJson(
+    Uri url, {
+    Map<String, String>? headers,
+    CancellationToken? cancelToken,
+  }) =>
+      super
+          .delete(url, cancelToken, headers: headers)
+          .then<dynamic>(interceptAndParseJson(cancelToken));
 
   //
   //
   //
 
   @override
-  Future<http.StreamedResponse> send(http.BaseRequest request) async {
+  Future<http.StreamedResponse> send(
+    http.BaseRequest request,
+    CancellationToken? cancelToken,
+  ) async {
     final interceptedRequest = _requestInterceptors.isEmpty
         ? request
         : await _requestInterceptors.fold<Future<http.BaseRequest>>(
-            Future.value(request),
-            (acc, interceptor) => acc.then((req) => interceptor(req)),
+            requestFuture(request, cancelToken),
+            (acc, interceptor) {
+              return acc.then((req) {
+                cancelToken?.guard(StackTrace.current);
+                return interceptor(req);
+              });
+            },
           );
 
+    cancelToken?.guard(StackTrace.current);
+
     final responseFuture = _client.send(interceptedRequest);
+
+    cancelToken?.guard(StackTrace.current);
+
     final response = _timeout != null
         ? await responseFuture.timeout(
             _timeout!,
-            onTimeout: () =>
-                throw SimpleHttpClientTimeoutException(interceptedRequest),
+            onTimeout: () {
+              cancelToken?.guard(StackTrace.current);
+              throw SimpleHttpClientTimeoutException(interceptedRequest);
+            },
           )
         : await responseFuture;
+
+    cancelToken?.guard(StackTrace.current);
 
     return response;
   }
@@ -211,20 +254,28 @@ class _DefaultSimpleHttpClient extends SimpleHttpClient {
   //
   //
 
-  FutureOr<dynamic> interceptAndParseJson(http.Response response) {
-    /// TODO: https://github.com/dart-lang/http/issues/782: cupertino_http: BaseResponse.request is null
-    final request = response.request;
+  FutureOr<dynamic> Function(http.Response) interceptAndParseJson(
+    CancellationToken? cancelToken,
+  ) =>
+      (response) {
+        /// TODO: https://github.com/dart-lang/http/issues/782: cupertino_http: BaseResponse.request is null
+        final request = response.request;
 
-    return _responseInterceptors.isNotEmpty && request != null
-        ? _responseInterceptors
-            .fold<Future<void>>(
-              Future.value(null),
-              (acc, interceptor) =>
-                  acc.then((_) => interceptor(request, response)),
-            )
-            .then<dynamic>((_) => parseJsonOrThrow(response))
-        : parseJsonOrThrow(response);
-  }
+        return _responseInterceptors.isNotEmpty && request != null
+            ? _responseInterceptors
+                .fold<Future<void>>(
+                requestFuture(request, cancelToken),
+                (acc, interceptor) => acc.then((_) {
+                  cancelToken?.guard(StackTrace.current);
+                  return interceptor(request, response);
+                }),
+              )
+                .then<dynamic>((_) {
+                cancelToken?.guard(StackTrace.current);
+                return parseJsonOrThrow(response);
+              })
+            : parseJsonOrThrow(response);
+      };
 
   dynamic parseJsonOrThrow(http.Response response) {
     final statusCode = response.statusCode;
@@ -240,4 +291,10 @@ class _DefaultSimpleHttpClient extends SimpleHttpClient {
 
   String? bodyToString(Object? body) =>
       body != null ? _jsonEncoder(body) : null;
+
+  static Future<http.BaseRequest> requestFuture(
+      http.BaseRequest request, CancellationToken? cancelToken) {
+    cancelToken?.guard(StackTrace.current);
+    return Future.value(request);
+  }
 }

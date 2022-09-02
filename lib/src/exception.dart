@@ -1,7 +1,9 @@
 import 'package:http/http.dart' as http;
 
 /// TODO(docs)
-class SimpleHttpClientException implements Exception {}
+class SimpleHttpClientException implements Exception {
+  const SimpleHttpClientException._();
+}
 
 /// TODO(docs)
 class SimpleHttpClientTimeoutException extends SimpleHttpClientException {
@@ -9,7 +11,7 @@ class SimpleHttpClientTimeoutException extends SimpleHttpClientException {
   final http.BaseRequest request;
 
   /// TODO(docs)
-  SimpleHttpClientTimeoutException(this.request);
+  SimpleHttpClientTimeoutException(this.request) : super._();
 
   @override
   String toString() => 'SimpleHttpClientTimeoutException{request: $request}';
@@ -43,7 +45,7 @@ class SimpleHttpClientErrorResponseException extends SimpleHttpClientException {
   String get errorResponseBody => response.body;
 
   /// TODO(docs)
-  SimpleHttpClientErrorResponseException(this.response);
+  SimpleHttpClientErrorResponseException(this.response) : super._();
 
   @override
   bool operator ==(Object other) =>
@@ -58,4 +60,16 @@ class SimpleHttpClientErrorResponseException extends SimpleHttpClientException {
   @override
   String toString() =>
       'SimpleHttpClientErrorResponseException{response: $response}';
+}
+
+/// TODO(docs)
+class SimpleHttpClientCancellationException extends SimpleHttpClientException {
+  final StackTrace stackTrace;
+
+  /// TODO(docs)
+  SimpleHttpClientCancellationException(this.stackTrace) : super._();
+
+  @override
+  String toString() =>
+      'SimpleHttpClientCancellationException{stackTrace: $stackTrace}';
 }

@@ -4,6 +4,8 @@ import 'package:http_client_hoc081098/http_client_hoc081098.dart';
 import 'package:http/http.dart' as http;
 
 void main() async {
+  final cancelToken = CancellationToken();
+
   final loggingInterceptor = SimpleHttpClientLoggingInterceptor(
     DefaultSimpleHttpClientLogger(
       level: SimpleHttpClientLogLevel.body,
@@ -15,7 +17,7 @@ void main() async {
 
   final client = SimpleHttpClient(
     client: http.Client(),
-    timeout: const Duration(seconds: 30),
+    timeout: const Duration(seconds: 10),
     requestInterceptors: [
       (request) async {
         await Future<void>.delayed(const Duration(milliseconds: 100));
@@ -33,6 +35,11 @@ void main() async {
   );
 
   final uri = Uri.parse('https://jsonplaceholder.typicode.com/users/1');
-  final json = await client.getJson(uri, headers: {}) as Map<String, dynamic>;
-  print(json);
+
+  final dynamic json = await client.getJson(
+    uri,
+    headers: {},
+    cancelToken: cancelToken,
+  );
+  print('Done $json');
 }
