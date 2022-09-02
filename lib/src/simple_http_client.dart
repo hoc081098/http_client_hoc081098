@@ -21,7 +21,7 @@ typedef ResponseInterceptor = FutureOr<void> Function(
 typedef JsonDecoderFunction = dynamic Function(String source);
 
 /// TODO(docs)
-typedef JsonEncoderFunction = String Function(Object? object);
+typedef JsonEncoderFunction = String Function(Object object);
 
 /// TODO(docs)
 @sealed
