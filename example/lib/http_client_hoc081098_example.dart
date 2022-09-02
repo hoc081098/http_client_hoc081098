@@ -15,7 +15,7 @@ void main() async {
 
   final client = SimpleHttpClient(
     client: http.Client(),
-    timeout: const Duration(seconds: 30),
+    timeout: const Duration(seconds: 10),
     requestInterceptors: [
       (request) async {
         await Future<void>.delayed(const Duration(milliseconds: 100));
@@ -32,7 +32,17 @@ void main() async {
     ],
   );
 
+  final cancelToken = CancellationToken();
   final uri = Uri.parse('https://jsonplaceholder.typicode.com/users/1');
-  final json = await client.getJson(uri, headers: {}) as Map<String, dynamic>;
+
+  // ignore: unawaited_futures
+  () async {
+    await Future<void>.delayed(const Duration(milliseconds: 300));
+    cancelToken.cancel();
+    print('Cancelling...');
+  }();
+
+  final json = await client.getJson(uri, headers: {}, cancelToken: cancelToken)
+      as Map<String, dynamic>;
   print(json);
 }
