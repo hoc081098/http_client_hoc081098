@@ -98,6 +98,7 @@ enum SimpleHttpClientLogLevel {
 class DefaultSimpleHttpClientLogger implements SimpleHttpClientLogger {
   /// TODO(docs)
   static const defaultTag = '🚀 [SIMPLE-HTTP-CLIENT] ';
+  static const _indent = '  • ';
 
   final LoggerFunction _loggerFunction;
 
@@ -228,5 +229,3 @@ class DefaultSimpleHttpClientLogger implements SimpleHttpClientLogger {
     _loggerFunction('<-- END HTTP');
   }
 }
-
-const _indent = '  • ';
