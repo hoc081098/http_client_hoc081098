@@ -30,7 +30,6 @@ class CancellationToken {
   }
 
   /// throw [SimpleCancellationException] if this was cancelled.
-  @internal
   void guard() {
     if (_isCancelled) {
       throw const SimpleCancellationException();
