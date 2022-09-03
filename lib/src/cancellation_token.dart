@@ -57,13 +57,12 @@ Single<T> useCancellationToken<T>(
   CancellationToken? cancelToken;
   StreamSubscription<T>? subscription;
 
-  controller.onListen = () {
-    subscription = block(cancelToken = CancellationToken()).asStream().listen(
-          controller.add,
-          onError: controller.addError,
-          onDone: controller.close,
-        );
-  };
+  controller.onListen = () =>
+      subscription = block(cancelToken = CancellationToken()).asStream().listen(
+            controller.add,
+            onError: controller.addError,
+            onDone: controller.close,
+          );
   controller.onCancel = () {
     final future = subscription?.cancel();
     subscription = null;
