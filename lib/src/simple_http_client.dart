@@ -92,6 +92,12 @@ abstract class SimpleHttpClient {
     Map<String, String>? headers,
     CancellationToken? cancelToken,
   });
+
+  /// Closes the client and cleans up any resources associated with it.
+  ///
+  /// It's important to close each client when it's done being used; failing to
+  /// do so can cause the Dart process to hang.
+  void close();
 }
 
 /// TODO(docs)
@@ -207,6 +213,9 @@ class _DefaultSimpleHttpClient extends BaseClient implements SimpleHttpClient {
       super
           .delete(url, cancelToken, headers: headers)
           .then<dynamic>(interceptAndParseJson(cancelToken));
+
+  @override
+  void close() => _client.close();
 
   //
   //
