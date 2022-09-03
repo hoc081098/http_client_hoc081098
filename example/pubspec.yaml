@@ -8,7 +8,8 @@ environment:
 
 dependencies:
   http: ^0.13.0
-  http_client_hoc081098: any
+  http_client_hoc081098:
+  cancellation_token_hoc081098:
 
 dev_dependencies:
   lints: ^2.0.0
@@ -16,3 +17,5 @@ dev_dependencies:
 dependency_overrides:
   http_client_hoc081098:
     path: ../../http_client_hoc081098
+  cancellation_token_hoc081098:
+    path: ../../cancellation_token_hoc081098

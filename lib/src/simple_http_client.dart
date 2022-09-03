@@ -2,11 +2,11 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:cancellation_token_hoc081098/cancellation_token_hoc081098.dart';
 import 'package:http/http.dart' as http;
 import 'package:meta/meta.dart';
 
 import 'base.dart';
-import 'cancellation_token.dart';
 import 'exception.dart';
 
 /// TODO(docs)

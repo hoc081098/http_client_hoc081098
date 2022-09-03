@@ -37,6 +37,13 @@
             </list>
           </value>
         </entry>
+        <entry key="cancellation_token_hoc081098">
+          <value>
+            <list>
+              <option value="$PROJECT_DIR$/../cancellation_token_hoc081098/lib" />
+            </list>
+          </value>
+        </entry>
         <entry key="collection">
           <value>
             <list>
@@ -409,6 +416,7 @@
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/web_socket_channel-2.2.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/webkit_inspection_protocol-1.1.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/yaml-3.1.1/lib" />
+      <root url="file://$PROJECT_DIR$/../cancellation_token_hoc081098/lib" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />
