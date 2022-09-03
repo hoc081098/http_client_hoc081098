@@ -8,12 +8,12 @@ import 'simple_http_client.dart';
 ///
 /// The format of the logs created by this class should not be considered stable and may
 /// change slightly between releases. If you need a stable logging format, use your own interceptor.
-class SimpleHttpClientLoggingInterceptor {
+class SimpleLoggingInterceptor {
   /// The logger used to log messages.
-  final SimpleHttpClientLogger logger;
+  final SimpleLogger logger;
 
-  /// Construct a [SimpleHttpClientLoggingInterceptor] with a [logger].
-  SimpleHttpClientLoggingInterceptor(this.logger);
+  /// Construct a [SimpleLoggingInterceptor] with a [logger].
+  SimpleLoggingInterceptor(this.logger);
 
   /// A [RequestInterceptor] which logs request information.
   /// It should be the last in the chain of interceptors.
@@ -32,7 +32,7 @@ class SimpleHttpClientLoggingInterceptor {
 typedef LoggerFunction = void Function(String message);
 
 /// TODO(docs)
-abstract class SimpleHttpClientLogger {
+abstract class SimpleLogger {
   /// Logging HTTP request.
   void logRequest(http.BaseRequest request);
 
@@ -41,7 +41,7 @@ abstract class SimpleHttpClientLogger {
 }
 
 /// The log level.
-enum SimpleHttpClientLogLevel {
+enum SimpleLogLevel {
   /// No logs.
   none,
 
@@ -94,8 +94,8 @@ enum SimpleHttpClientLogLevel {
   body,
 }
 
-/// The default implementation of [SimpleHttpClientLogger] that logs request and response information.
-class DefaultSimpleHttpClientLogger implements SimpleHttpClientLogger {
+/// The default implementation of [SimpleLogger] that logs request and response information.
+class DefaultSimpleHttpClientLogger implements SimpleLogger {
   /// TODO(docs)
   static const defaultTag = '🚀 [SIMPLE-HTTP-CLIENT] ';
   static const _indent = '  • ';
@@ -103,13 +103,13 @@ class DefaultSimpleHttpClientLogger implements SimpleHttpClientLogger {
   final LoggerFunction _loggerFunction;
 
   /// Logging level.
-  final SimpleHttpClientLogLevel level;
+  final SimpleLogLevel level;
   final Set<String> _headersToRedact;
 
   /// TODO(docs)
   DefaultSimpleHttpClientLogger({
     LoggerFunction loggerFunction = print,
-    this.level = SimpleHttpClientLogLevel.none,
+    this.level = SimpleLogLevel.none,
     String tag = defaultTag,
     Set<String> headersToRedact = const <String>{},
   })  : _loggerFunction = ((s) => loggerFunction(tag + s)),
@@ -117,29 +117,29 @@ class DefaultSimpleHttpClientLogger implements SimpleHttpClientLogger {
 
   @override
   void logRequest(http.BaseRequest request) {
-    if (level == SimpleHttpClientLogLevel.none) {
+    if (level == SimpleLogLevel.none) {
       return;
     }
 
     _logRequest(
       request: request,
-      includeBody: level == SimpleHttpClientLogLevel.body,
-      includeHeaders: level == SimpleHttpClientLogLevel.headers ||
-          level == SimpleHttpClientLogLevel.body,
+      includeBody: level == SimpleLogLevel.body,
+      includeHeaders:
+          level == SimpleLogLevel.headers || level == SimpleLogLevel.body,
     );
   }
 
   @override
   void logResponse(http.Response response) {
-    if (level == SimpleHttpClientLogLevel.none) {
+    if (level == SimpleLogLevel.none) {
       return;
     }
 
     _logResponse(
       response: response,
-      includeBody: level == SimpleHttpClientLogLevel.body,
-      includeHeaders: level == SimpleHttpClientLogLevel.headers ||
-          level == SimpleHttpClientLogLevel.body,
+      includeBody: level == SimpleLogLevel.body,
+      includeHeaders:
+          level == SimpleLogLevel.headers || level == SimpleLogLevel.body,
     );
   }
 

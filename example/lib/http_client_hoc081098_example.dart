@@ -4,9 +4,9 @@ import 'package:http_client_hoc081098/http_client_hoc081098.dart';
 import 'package:http/http.dart' as http;
 
 void main() async {
-  final loggingInterceptor = SimpleHttpClientLoggingInterceptor(
+  final loggingInterceptor = SimpleLoggingInterceptor(
     DefaultSimpleHttpClientLogger(
-      level: SimpleHttpClientLogLevel.body,
+      level: SimpleLogLevel.body,
       headersToRedact: {
         HttpHeaders.authorizationHeader,
       },
