@@ -60,20 +60,3 @@ class SimpleErrorResponseException extends SimpleHttpClientException {
   @override
   String toString() => 'SimpleErrorResponseException{response: $response}';
 }
-
-/// TODO(docs)
-class SimpleCancellationException extends SimpleHttpClientException {
-  /// TODO(docs)
-  const SimpleCancellationException() : super._();
-
-  @override
-  String toString() => 'SimpleCancellationException{}';
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is SimpleCancellationException && runtimeType == other.runtimeType;
-
-  @override
-  int get hashCode => 0;
-}

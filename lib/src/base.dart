@@ -5,7 +5,6 @@ import 'dart:typed_data';
 import 'package:cancellation_token_hoc081098/cancellation_token_hoc081098.dart';
 import 'package:http/http.dart' as http;
 import 'package:meta/meta.dart';
-import 'package:rxdart/rxdart.dart';
 
 /// The abstract base class for an HTTP client.
 ///
@@ -140,45 +139,56 @@ abstract class BaseClient {
     Object? body,
     Encoding? encoding,
   }) =>
-      cancellationGuard(
-        cancelToken,
-        () async {
-          final request = http.Request(method, url);
+      cancelToken == null
+          ? Future.sync(
+                  () => _buildRequest(method, url, headers, encoding, body))
+              .then((request) => send(request, null))
+              .then(http.Response.fromStream)
+          : cancelToken.guardFuture(() async {
+              final request =
+                  _buildRequest(method, url, headers, encoding, body);
 
-          if (headers != null) request.headers.addAll(headers);
-          if (encoding != null) request.encoding = encoding;
-          if (body != null) {
-            if (body is String) {
-              request.body = body;
-            } else if (body is List) {
-              request.bodyBytes = body.cast<int>();
-            } else if (body is Map) {
-              request.bodyFields = body.cast<String, String>();
-            } else {
-              throw ArgumentError('Invalid request body "$body".');
-            }
-          }
+              cancelToken.guard();
 
-          if (cancelToken == null) {
-            return send(request, null).then(http.Response.fromStream);
-          }
+              final streamedResponse = await send(request, cancelToken);
 
-          cancelToken.guard();
+              cancelToken.guard();
 
-          final streamedResponse = await send(request, cancelToken);
+              final response = await _fromStream(streamedResponse, cancelToken);
 
-          cancelToken.guard();
+              cancelToken.guard();
 
-          final response = await _fromStream(streamedResponse, cancelToken);
+              return response;
+            });
 
-          cancelToken.guard();
+  static http.Request _buildRequest(
+    String method,
+    Uri url,
+    Map<String, String>? headers,
+    Encoding? encoding,
+    Object? body,
+  ) {
+    final request = http.Request(method, url);
 
-          return response;
-        },
-      );
+    if (headers != null) request.headers.addAll(headers);
+    if (encoding != null) request.encoding = encoding;
+    if (body != null) {
+      if (body is String) {
+        request.body = body;
+      } else if (body is List) {
+        request.bodyBytes = body.cast<int>();
+      } else if (body is Map) {
+        request.bodyFields = body.cast<String, String>();
+      } else {
+        throw ArgumentError('Invalid request body "$body".');
+      }
+    }
+
+    return request;
+  }
 
   /// Throws an error if [response] is not successful.
-  void _checkResponseSuccess(Uri url, http.Response response) {
+  static void _checkResponseSuccess(Uri url, http.Response response) {
     if (response.statusCode < 400) return;
     var message = 'Request to $url failed with status ${response.statusCode}';
     if (response.reasonPhrase != null) {
@@ -217,7 +227,7 @@ Future<Uint8List> _toBytes(
   final sink = ByteConversionSink.withCallback(
       (bytes) => completer.complete(Uint8List.fromList(bytes)));
 
-  stream.takeUntil(onCancel(cancelToken)).listen(
+  stream.guardedBy(cancelToken).listen(
         sink.add,
         onError: completer.completeError,
         onDone: sink.close,
