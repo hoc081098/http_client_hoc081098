@@ -56,8 +56,7 @@ void main() {
         await Future<void>.delayed(const Duration(milliseconds: 100));
         token.cancel();
 
-        await expectLater(
-            future, throwsA(isA<SimpleHttpClientCancellationException>()));
+        await expectLater(future, throwsA(isA<SimpleCancellationException>()));
         expect(list, [1, 2, 3]);
       });
     });

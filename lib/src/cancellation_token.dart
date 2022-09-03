@@ -25,21 +25,21 @@ class CancellationToken {
     _completers = null;
 
     for (final completer in completers) {
-      completer.completeError(const SimpleHttpClientCancellationException());
+      completer.completeError(const SimpleCancellationException());
     }
   }
 
-  /// throw [SimpleHttpClientCancellationException] if this was cancelled.
+  /// throw [SimpleCancellationException] if this was cancelled.
   @internal
   void guard() {
     if (_isCancelled) {
-      throw const SimpleHttpClientCancellationException();
+      throw const SimpleCancellationException();
     }
   }
 
   void _addCompleter(Completer<Never> completer) {
     if (_isCancelled) {
-      completer.completeError(const SimpleHttpClientCancellationException());
+      completer.completeError(const SimpleCancellationException());
     } else {
       _completers?.add(completer);
     }
@@ -78,12 +78,12 @@ Single<T> useCancellationToken<T>(
   return Single.safe(controller.stream);
 }
 
-/// Returns a Stream that emits a [SimpleHttpClientCancellationException] as error event
+/// Returns a Stream that emits a [SimpleCancellationException] as error event
 /// and a done event when the given [token] is cancelled.
 @internal
 Stream<Never> onCancel(CancellationToken token) {
   if (token.isCancelled) {
-    return Stream.error(const SimpleHttpClientCancellationException());
+    return Stream.error(const SimpleCancellationException());
   }
 
   final controller = StreamController<Never>(sync: true);
@@ -91,7 +91,7 @@ Stream<Never> onCancel(CancellationToken token) {
   StreamSubscription<Never>? subscription;
 
   void emitAndClose() {
-    controller.addError(const SimpleHttpClientCancellationException());
+    controller.addError(const SimpleCancellationException());
     controller.close();
   }
 
@@ -107,7 +107,7 @@ Stream<Never> onCancel(CancellationToken token) {
     subscription = completer!.future.asStream().listen(
       null,
       onError: (Object error) {
-        if (error is SimpleHttpClientCancellationException) {
+        if (error is SimpleCancellationException) {
           emitAndClose();
         }
       },
@@ -138,7 +138,7 @@ Future<T> cancellationGuard<T>(
   }
 
   if (token.isCancelled) {
-    return Future.error(const SimpleHttpClientCancellationException());
+    return Future.error(const SimpleCancellationException());
   }
 
   final completer = Completer<Never>();

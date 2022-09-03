@@ -6,20 +6,20 @@ class SimpleHttpClientException implements Exception {
 }
 
 /// TODO(docs)
-class SimpleHttpClientTimeoutException extends SimpleHttpClientException {
+class SimpleTimeoutException extends SimpleHttpClientException {
   /// The (frozen) request.
   final http.BaseRequest request;
 
   /// TODO(docs)
-  SimpleHttpClientTimeoutException(this.request) : super._();
+  SimpleTimeoutException(this.request) : super._();
 
   @override
-  String toString() => 'SimpleHttpClientTimeoutException{request: $request}';
+  String toString() => 'SimpleTimeoutException{request: $request}';
 
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is SimpleHttpClientTimeoutException &&
+      other is SimpleTimeoutException &&
           runtimeType == other.runtimeType &&
           request == other.request;
 
@@ -28,7 +28,7 @@ class SimpleHttpClientTimeoutException extends SimpleHttpClientException {
 }
 
 /// TODO(docs)
-class SimpleHttpClientErrorResponseException extends SimpleHttpClientException {
+class SimpleErrorResponseException extends SimpleHttpClientException {
   /// The error response.
   final http.Response response;
 
@@ -45,12 +45,12 @@ class SimpleHttpClientErrorResponseException extends SimpleHttpClientException {
   String get errorResponseBody => response.body;
 
   /// TODO(docs)
-  SimpleHttpClientErrorResponseException(this.response) : super._();
+  SimpleErrorResponseException(this.response) : super._();
 
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is SimpleHttpClientErrorResponseException &&
+      other is SimpleErrorResponseException &&
           runtimeType == other.runtimeType &&
           response == other.response;
 
@@ -58,23 +58,21 @@ class SimpleHttpClientErrorResponseException extends SimpleHttpClientException {
   int get hashCode => response.hashCode;
 
   @override
-  String toString() =>
-      'SimpleHttpClientErrorResponseException{response: $response}';
+  String toString() => 'SimpleErrorResponseException{response: $response}';
 }
 
 /// TODO(docs)
-class SimpleHttpClientCancellationException extends SimpleHttpClientException {
+class SimpleCancellationException extends SimpleHttpClientException {
   /// TODO(docs)
-  const SimpleHttpClientCancellationException() : super._();
+  const SimpleCancellationException() : super._();
 
   @override
-  String toString() => 'SimpleHttpClientCancellationException{}';
+  String toString() => 'SimpleCancellationException{}';
 
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is SimpleHttpClientCancellationException &&
-          runtimeType == other.runtimeType;
+      other is SimpleCancellationException && runtimeType == other.runtimeType;
 
   @override
   int get hashCode => 0;

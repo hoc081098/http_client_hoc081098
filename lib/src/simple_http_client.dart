@@ -240,7 +240,7 @@ class _DefaultSimpleHttpClient extends BaseClient implements SimpleHttpClient {
             _timeout!,
             onTimeout: () {
               cancelToken?.guard();
-              throw SimpleHttpClientTimeoutException(interceptedRequest);
+              throw SimpleTimeoutException(interceptedRequest);
             },
           )
         : await responseFuture;
@@ -286,7 +286,7 @@ class _DefaultSimpleHttpClient extends BaseClient implements SimpleHttpClient {
       return _jsonDecoder(body);
     }
 
-    throw SimpleHttpClientErrorResponseException(response);
+    throw SimpleErrorResponseException(response);
   }
 
   String? bodyToString(Object? body) =>
