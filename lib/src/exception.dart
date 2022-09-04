@@ -15,16 +15,6 @@ class SimpleTimeoutException extends SimpleHttpClientException {
 
   @override
   String toString() => 'SimpleTimeoutException{request: $request}';
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is SimpleTimeoutException &&
-          runtimeType == other.runtimeType &&
-          request == other.request;
-
-  @override
-  int get hashCode => request.hashCode;
 }
 
 /// TODO(docs)
@@ -46,16 +36,6 @@ class SimpleErrorResponseException extends SimpleHttpClientException {
 
   /// TODO(docs)
   SimpleErrorResponseException(this.response) : super._();
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is SimpleErrorResponseException &&
-          runtimeType == other.runtimeType &&
-          response == other.response;
-
-  @override
-  int get hashCode => response.hashCode;
 
   @override
   String toString() => 'SimpleErrorResponseException{response: $response}';
