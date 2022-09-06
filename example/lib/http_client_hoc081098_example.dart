@@ -68,8 +68,23 @@ void main() async {
     await Future<void>.delayed(const Duration(milliseconds: 120));
     await subscription.cancel();
     print('Cancelling single...');
-    client.close();
+    // client.close();
   }();
 
   await Future<void>.delayed(const Duration(seconds: 1));
+  print('-' * 128);
+
+  try {
+    final json = await client.postJson(
+      Uri.parse('https://jsonplaceholder.typicode.com/users'),
+      body: {
+        'name': 'hoc081098',
+        'username': 'hoc081098',
+        'email': 'hoc081098@gmail.com',
+      },
+    ) as Map<String, dynamic>;
+    print(json);
+  } catch (e) {
+    print(e);
+  }
 }

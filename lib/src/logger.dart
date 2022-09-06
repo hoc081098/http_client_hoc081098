@@ -1,6 +1,6 @@
 import 'package:http/http.dart' as http;
 
-import 'simple_http_client.dart';
+import 'interface.dart';
 
 // ignore_for_file: prefer_function_declarations_over_variables
 
@@ -24,8 +24,10 @@ class SimpleLoggingInterceptor {
 
   /// A [ResponseInterceptor] which logs response information.
   /// It should be the first in the chain of interceptors.
-  late final ResponseInterceptor responseInterceptor =
-      (_, response) => logger.logResponse(response);
+  late final ResponseInterceptor responseInterceptor = (_, response) {
+    logger.logResponse(response);
+    return response;
+  };
 }
 
 /// TODO(docs)
