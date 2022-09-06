@@ -106,59 +106,59 @@ abstract class SimpleHttpClient {
 
   /// TODO(docs)
   Future<http.Response> head(
-    Uri url,
-    CancellationToken? cancelToken, {
+    Uri url, {
     Map<String, String>? headers,
+    CancellationToken? cancelToken,
   });
 
   /// TODO(docs)
   Future<http.Response> get(
-    Uri url,
-    CancellationToken? cancelToken, {
+    Uri url, {
     Map<String, String>? headers,
+    CancellationToken? cancelToken,
   });
 
   /// TODO(docs)
   Future<http.Response> post(
-    Uri url,
-    CancellationToken? cancelToken, {
+    Uri url, {
     Map<String, String>? headers,
     Object? body,
     Encoding? encoding,
+    CancellationToken? cancelToken,
   });
 
   /// TODO(docs)
   Future<http.Response> put(
-    Uri url,
-    CancellationToken? cancelToken, {
+    Uri url, {
     Map<String, String>? headers,
     Object? body,
     Encoding? encoding,
+    CancellationToken? cancelToken,
   });
 
   /// TODO(docs)
   Future<http.Response> patch(
-    Uri url,
-    CancellationToken? cancelToken, {
+    Uri url, {
     Map<String, String>? headers,
     Object? body,
     Encoding? encoding,
+    CancellationToken? cancelToken,
   });
 
   /// TODO(docs)
   Future<http.Response> delete(
-    Uri url,
-    CancellationToken? cancelToken, {
+    Uri url, {
     Map<String, String>? headers,
     Object? body,
     Encoding? encoding,
+    CancellationToken? cancelToken,
   });
 
   /// TODO(docs)
   Future<String> read(
-    Uri url,
-    CancellationToken? cancelToken, {
+    Uri url, {
     Map<String, String>? headers,
+    CancellationToken? cancelToken,
   });
 
   /// TODO(docs)

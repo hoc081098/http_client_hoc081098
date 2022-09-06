@@ -47,7 +47,7 @@ class DefaultSimpleHttpClient implements SimpleHttpClient {
   }) =>
       get(
         url,
-        cancelToken,
+        cancelToken: cancelToken,
         headers: {
           ...?headers,
           HttpHeaders.contentTypeHeader: SimpleHttpClient.jsonUtf8ContentType,
@@ -82,7 +82,7 @@ class DefaultSimpleHttpClient implements SimpleHttpClient {
   }) =>
       post(
         url,
-        cancelToken,
+        cancelToken: cancelToken,
         headers: {
           ...?headers,
           HttpHeaders.contentTypeHeader: SimpleHttpClient.jsonUtf8ContentType,
@@ -99,7 +99,7 @@ class DefaultSimpleHttpClient implements SimpleHttpClient {
   }) =>
       put(
         url,
-        cancelToken,
+        cancelToken: cancelToken,
         headers: {
           ...?headers,
           HttpHeaders.contentTypeHeader: SimpleHttpClient.jsonUtf8ContentType,
@@ -113,7 +113,7 @@ class DefaultSimpleHttpClient implements SimpleHttpClient {
     Map<String, String>? headers,
     CancellationToken? cancelToken,
   }) =>
-      delete(url, cancelToken, headers: headers)
+      delete(url, cancelToken: cancelToken, headers: headers)
           .then<dynamic>(_parseJsonOrThrow);
 
   @override
@@ -130,27 +130,27 @@ class DefaultSimpleHttpClient implements SimpleHttpClient {
 
   @override
   Future<http.Response> head(
-    Uri url,
-    CancellationToken? cancelToken, {
+    Uri url, {
     Map<String, String>? headers,
+    CancellationToken? cancelToken,
   }) =>
       _sendUnstreamed('HEAD', url, headers, cancelToken);
 
   @override
   Future<http.Response> get(
-    Uri url,
-    CancellationToken? cancelToken, {
+    Uri url, {
     Map<String, String>? headers,
+    CancellationToken? cancelToken,
   }) =>
       _sendUnstreamed('GET', url, headers, cancelToken);
 
   @override
   Future<http.Response> post(
-    Uri url,
-    CancellationToken? cancelToken, {
+    Uri url, {
     Map<String, String>? headers,
     Object? body,
     Encoding? encoding,
+    CancellationToken? cancelToken,
   }) =>
       _sendUnstreamed(
         'POST',
@@ -163,11 +163,11 @@ class DefaultSimpleHttpClient implements SimpleHttpClient {
 
   @override
   Future<http.Response> put(
-    Uri url,
-    CancellationToken? cancelToken, {
+    Uri url, {
     Map<String, String>? headers,
     Object? body,
     Encoding? encoding,
+    CancellationToken? cancelToken,
   }) =>
       _sendUnstreamed(
         'PUT',
@@ -180,11 +180,11 @@ class DefaultSimpleHttpClient implements SimpleHttpClient {
 
   @override
   Future<http.Response> patch(
-    Uri url,
-    CancellationToken? cancelToken, {
+    Uri url, {
     Map<String, String>? headers,
     Object? body,
     Encoding? encoding,
+    CancellationToken? cancelToken,
   }) =>
       _sendUnstreamed(
         'PATCH',
@@ -197,11 +197,11 @@ class DefaultSimpleHttpClient implements SimpleHttpClient {
 
   @override
   Future<http.Response> delete(
-    Uri url,
-    CancellationToken? cancelToken, {
+    Uri url, {
     Map<String, String>? headers,
     Object? body,
     Encoding? encoding,
+    CancellationToken? cancelToken,
   }) =>
       _sendUnstreamed(
         'DELETE',
@@ -214,11 +214,11 @@ class DefaultSimpleHttpClient implements SimpleHttpClient {
 
   @override
   Future<String> read(
-    Uri url,
-    CancellationToken? cancelToken, {
+    Uri url, {
     Map<String, String>? headers,
+    CancellationToken? cancelToken,
   }) async {
-    final response = await get(url, cancelToken, headers: headers);
+    final response = await get(url, cancelToken: cancelToken, headers: headers);
     _checkResponseSuccess(url, response);
     return response.body;
   }
@@ -229,7 +229,7 @@ class DefaultSimpleHttpClient implements SimpleHttpClient {
     Map<String, String>? headers,
     CancellationToken? cancelToken,
   }) async {
-    final response = await get(url, cancelToken, headers: headers);
+    final response = await get(url, cancelToken: cancelToken, headers: headers);
     _checkResponseSuccess(url, response);
     return response.bodyBytes;
   }
