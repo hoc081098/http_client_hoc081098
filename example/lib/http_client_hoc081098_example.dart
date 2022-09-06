@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:http_client_hoc081098/http_client_hoc081098.dart';
 import 'package:http/http.dart' as http;
 
+import 'user.dart';
+
 void main() async {
   final loggingInterceptor = SimpleLoggingInterceptor(
     DefaultSimpleHttpClientLogger(
@@ -58,7 +60,7 @@ void main() async {
       headers: {},
       cancelToken: cancelToken,
     ),
-  ).cast<Map<String, dynamic>>();
+  ).cast<Map<String, dynamic>>().map(User.fromJson);
   final subscription = single.listen(print, onError: print);
 
   // ignore: unawaited_futures

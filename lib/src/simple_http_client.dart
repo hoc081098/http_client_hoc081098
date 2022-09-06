@@ -6,8 +6,9 @@ import 'package:cancellation_token_hoc081098/cancellation_token_hoc081098.dart';
 import 'package:http/http.dart' as http;
 import 'package:meta/meta.dart';
 
-import 'base.dart';
 import 'exception.dart';
+
+import 'dart:typed_data';
 
 /// TODO(docs)
 typedef RequestInterceptor = FutureOr<http.BaseRequest> Function(
@@ -45,7 +46,7 @@ abstract class SimpleHttpClient {
         jsonEncoder: jsonEncoder,
       );
 
-  /// TODO(docs)
+  /// Sends an HTTP request and asynchronously returns the response.
   Future<http.StreamedResponse> send(
     http.BaseRequest request,
     CancellationToken? cancelToken,
@@ -101,7 +102,7 @@ abstract class SimpleHttpClient {
 }
 
 /// TODO(docs)
-class _DefaultSimpleHttpClient extends BaseClient implements SimpleHttpClient {
+class _DefaultSimpleHttpClient implements SimpleHttpClient {
   /// JSON content type.
   static const jsonContentType = 'application/json; charset=utf-8';
 
@@ -135,7 +136,7 @@ class _DefaultSimpleHttpClient extends BaseClient implements SimpleHttpClient {
     Map<String, String>? headers,
     CancellationToken? cancelToken,
   }) =>
-      super.get(
+      get(
         url,
         cancelToken,
         headers: {
@@ -172,17 +173,15 @@ class _DefaultSimpleHttpClient extends BaseClient implements SimpleHttpClient {
     Map<String, dynamic>? body,
     CancellationToken? cancelToken,
   }) =>
-      super
-          .post(
-            url,
-            cancelToken,
-            headers: {
-              ...?headers,
-              HttpHeaders.contentTypeHeader: jsonContentType,
-            },
-            body: bodyToString(body),
-          )
-          .then<dynamic>(interceptAndParseJson(cancelToken));
+      post(
+        url,
+        cancelToken,
+        headers: {
+          ...?headers,
+          HttpHeaders.contentTypeHeader: jsonContentType,
+        },
+        body: bodyToString(body),
+      ).then<dynamic>(interceptAndParseJson(cancelToken));
 
   @override
   Future<dynamic> putJson(
@@ -191,17 +190,15 @@ class _DefaultSimpleHttpClient extends BaseClient implements SimpleHttpClient {
     Map<String, dynamic>? body,
     CancellationToken? cancelToken,
   }) {
-    return super
-        .put(
-          url,
-          cancelToken,
-          headers: {
-            ...?headers,
-            HttpHeaders.contentTypeHeader: jsonContentType,
-          },
-          body: bodyToString(body),
-        )
-        .then<dynamic>(interceptAndParseJson(cancelToken));
+    return put(
+      url,
+      cancelToken,
+      headers: {
+        ...?headers,
+        HttpHeaders.contentTypeHeader: jsonContentType,
+      },
+      body: bodyToString(body),
+    ).then<dynamic>(interceptAndParseJson(cancelToken));
   }
 
   @override
@@ -210,8 +207,7 @@ class _DefaultSimpleHttpClient extends BaseClient implements SimpleHttpClient {
     Map<String, String>? headers,
     CancellationToken? cancelToken,
   }) =>
-      super
-          .delete(url, cancelToken, headers: headers)
+      delete(url, cancelToken, headers: headers)
           .then<dynamic>(interceptAndParseJson(cancelToken));
 
   @override
@@ -306,4 +302,220 @@ class _DefaultSimpleHttpClient extends BaseClient implements SimpleHttpClient {
     cancelToken?.guard();
     return Future.value(request);
   }
+
+  //
+  //
+  //
+
+  /// @internal
+  Future<http.Response> head(
+    Uri url,
+    CancellationToken? cancelToken, {
+    Map<String, String>? headers,
+  }) =>
+      _sendUnstreamed('HEAD', url, headers, cancelToken);
+
+  /// @internal
+  Future<http.Response> get(
+    Uri url,
+    CancellationToken? cancelToken, {
+    Map<String, String>? headers,
+  }) =>
+      _sendUnstreamed('GET', url, headers, cancelToken);
+
+  /// @internal
+  Future<http.Response> post(
+    Uri url,
+    CancellationToken? cancelToken, {
+    Map<String, String>? headers,
+    Object? body,
+    Encoding? encoding,
+  }) =>
+      _sendUnstreamed(
+        'POST',
+        url,
+        headers,
+        cancelToken,
+        body: body,
+        encoding: encoding,
+      );
+
+  /// @internal
+  Future<http.Response> put(
+    Uri url,
+    CancellationToken? cancelToken, {
+    Map<String, String>? headers,
+    Object? body,
+    Encoding? encoding,
+  }) =>
+      _sendUnstreamed(
+        'PUT',
+        url,
+        headers,
+        cancelToken,
+        body: body,
+        encoding: encoding,
+      );
+
+  /// @internal
+  Future<http.Response> patch(
+    Uri url,
+    CancellationToken? cancelToken, {
+    Map<String, String>? headers,
+    Object? body,
+    Encoding? encoding,
+  }) =>
+      _sendUnstreamed(
+        'PATCH',
+        url,
+        headers,
+        cancelToken,
+        body: body,
+        encoding: encoding,
+      );
+
+  /// @internal
+  Future<http.Response> delete(
+    Uri url,
+    CancellationToken? cancelToken, {
+    Map<String, String>? headers,
+    Object? body,
+    Encoding? encoding,
+  }) =>
+      _sendUnstreamed(
+        'DELETE',
+        url,
+        headers,
+        cancelToken,
+        body: body,
+        encoding: encoding,
+      );
+
+  /// @internal
+  Future<String> read(
+    Uri url,
+    CancellationToken? cancelToken, {
+    Map<String, String>? headers,
+  }) async {
+    final response = await get(url, cancelToken, headers: headers);
+    _checkResponseSuccess(url, response);
+    return response.body;
+  }
+
+  /// @internal
+  Future<Uint8List> readBytes(
+    Uri url, {
+    Map<String, String>? headers,
+    CancellationToken? cancelToken,
+  }) async {
+    final response = await get(url, cancelToken, headers: headers);
+    _checkResponseSuccess(url, response);
+    return response.bodyBytes;
+  }
+
+  /// Sends a non-streaming [Request] and returns a non-streaming [Response].
+  Future<http.Response> _sendUnstreamed(
+    String method,
+    Uri url,
+    Map<String, String>? headers,
+    CancellationToken? cancelToken, {
+    Object? body,
+    Encoding? encoding,
+  }) =>
+      cancelToken == null
+          ? Future.sync(
+                  () => _buildRequest(method, url, headers, encoding, body))
+              .then((request) => send(request, null))
+              .then(http.Response.fromStream)
+          : cancelToken.guardFuture(() async {
+              final request =
+                  _buildRequest(method, url, headers, encoding, body);
+
+              cancelToken.guard();
+
+              final streamedResponse = await send(request, cancelToken);
+
+              cancelToken.guard();
+
+              final response = await _fromStream(streamedResponse, cancelToken);
+
+              cancelToken.guard();
+
+              return response;
+            });
+
+  static http.Request _buildRequest(
+    String method,
+    Uri url,
+    Map<String, String>? headers,
+    Encoding? encoding,
+    Object? body,
+  ) {
+    final request = http.Request(method, url);
+
+    if (headers != null) request.headers.addAll(headers);
+    if (encoding != null) request.encoding = encoding;
+    if (body != null) {
+      if (body is String) {
+        request.body = body;
+      } else if (body is List) {
+        request.bodyBytes = body.cast<int>();
+      } else if (body is Map) {
+        request.bodyFields = body.cast<String, String>();
+      } else {
+        throw ArgumentError('Invalid request body "$body".');
+      }
+    }
+
+    return request;
+  }
+
+  /// Throws an error if [response] is not successful.
+  static void _checkResponseSuccess(Uri url, http.Response response) {
+    if (response.statusCode < 400) return;
+    var message = 'Request to $url failed with status ${response.statusCode}';
+    if (response.reasonPhrase != null) {
+      message = '$message: ${response.reasonPhrase}';
+    }
+    throw http.ClientException('$message.', url);
+  }
+}
+
+/// Creates a new HTTP response by waiting for the full body to become
+/// available from a [StreamedResponse].
+Future<http.Response> _fromStream(
+  http.StreamedResponse response,
+  CancellationToken cancelToken,
+) async {
+  cancelToken.guard();
+
+  final body = await _toBytes(response.stream, cancelToken);
+
+  cancelToken.guard();
+
+  return http.Response.bytes(body, response.statusCode,
+      request: response.request,
+      headers: response.headers,
+      isRedirect: response.isRedirect,
+      persistentConnection: response.persistentConnection,
+      reasonPhrase: response.reasonPhrase);
+}
+
+/// Collects the data of this stream in a [Uint8List].
+Future<Uint8List> _toBytes(
+  http.ByteStream stream,
+  CancellationToken cancelToken,
+) {
+  final completer = Completer<Uint8List>();
+  final sink = ByteConversionSink.withCallback(
+      (bytes) => completer.complete(Uint8List.fromList(bytes)));
+
+  stream.guardedBy(cancelToken).listen(
+        sink.add,
+        onError: completer.completeError,
+        onDone: sink.close,
+        cancelOnError: true,
+      );
+
+  return completer.future;
 }
