@@ -34,6 +34,12 @@ abstract class SimpleHttpClient {
   static const multipartContentType = 'multipart/form-data';
 
   /// Construct a new [SimpleHttpClient].
+  /// Parameters:
+  /// * [client]: The underlying HTTP client.
+  /// * [requestInterceptors]: The request interceptors.
+  /// * [responseInterceptors]: The response interceptors.
+  /// * [jsonDecoder]: The function used to parse strings to JSON object.
+  /// * [jsonEncoder]: The JSON encoder used to convert a object to JSON string.
   factory SimpleHttpClient({
     required http.Client client,
     Duration? timeout,
@@ -53,6 +59,12 @@ abstract class SimpleHttpClient {
       );
 
   /// Sends an HTTP request and asynchronously returns the response.
+  ///
+  /// The [cancelToken] is used to cancel the [request].
+  /// Throws [SimpleTimeoutException] if sending request and receiving response timeout.
+  ///
+  /// When the response status code is not 2xx, this function do NOT throws [SimpleErrorResponseException],
+  /// it returns the response as normal.
   Future<http.Response> send(
     http.BaseRequest request, {
     CancellationToken? cancelToken,
@@ -63,9 +75,14 @@ abstract class SimpleHttpClient {
   //
 
   /// Sends an HTTP GET request with the given headers to the given URL.
-  /// Returns the resulting JSON object.
+  /// The `content-type` of the request will be set to [jsonUtf8ContentType].
+  /// Returns the parsed JSON object.
   ///
-  /// Can throw [SimpleHttpClientException].
+  /// The [cancelToken] is used to cancel the request.
+  /// Throws [SimpleErrorResponseException] if the response status code is not 2xx.
+  /// Throws [SimpleTimeoutException] if sending request and receiving response timeout.
+  ///
+  /// For more fine-grained control over the request, use [send] or [get] instead.
   Future<dynamic> getJson(
     Uri url, {
     Map<String, String>? headers,
