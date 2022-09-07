@@ -10,18 +10,25 @@ import 'exception.dart';
 
 import 'dart:typed_data';
 
-/// TODO(docs)
+/// If one or more request interceptors are set, they will be called before the
+/// request is sent to allow for modification of the original request.
+///
+/// Usually this is used to add other headers (such as authentication headers)
+/// to the request or log the request, ...
 typedef RequestInterceptor = FutureOr<http.BaseRequest> Function(
     http.BaseRequest request);
 
-/// TODO(docs)
+/// Used to able to modify the response before it is returned to the caller.
+///
+/// Usually this is used to log the response, retry the request, transform the
+/// response body, refresh the access token, ...
 typedef ResponseInterceptor = FutureOr<http.Response> Function(
     http.BaseRequest request, http.Response response);
 
-/// TODO(docs)
+/// A function used to parse the string and returns the resulting JSON object.
 typedef JsonDecoderFunction = dynamic Function(String source);
 
-/// TODO(docs)
+/// A function used to convert the object to a JSON string.
 typedef JsonEncoderFunction = String Function(Object object);
 
 /// TODO(docs)
