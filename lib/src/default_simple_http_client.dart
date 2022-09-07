@@ -24,7 +24,7 @@ class DefaultSimpleHttpClient implements SimpleHttpClient {
   final JsonDecoderFunction _jsonDecoder;
   final JsonEncoderFunction _jsonEncoder;
 
-  /// TODO(docs)
+  /// Constructs a [DefaultSimpleHttpClient].
   DefaultSimpleHttpClient({
     required http.Client client,
     required Duration? timeout,
