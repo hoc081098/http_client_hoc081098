@@ -134,7 +134,7 @@ abstract class SimpleHttpClient {
   /// Throws [SimpleErrorResponseException] if the response status code is not `2xx`.
   /// Throws [SimpleTimeoutException] if sending request and receiving response timeout.
   ///
-  /// For more fine-grained control over the request, use [send] or [post] instead.
+  /// For more fine-grained control over the request, use [send] or [put] instead.
   Future<dynamic> putJson(
     Uri url, {
     Map<String, String>? headers,
