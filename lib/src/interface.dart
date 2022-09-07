@@ -69,9 +69,8 @@ abstract class SimpleHttpClient {
   ///
   /// The [cancelToken] is used to cancel the [request].
   /// Throws [SimpleTimeoutException] if sending request and receiving response timeout.
-  ///
-  /// When the response status code is not 2xx, this function do NOT throws [SimpleErrorResponseException],
-  /// it returns the response as normal.
+  /// When the response status code is not `2xx`, the result [Future] do NOT
+  /// throws [SimpleErrorResponseException], it returns the response as normal.
   Future<http.Response> send(
     http.BaseRequest request, {
     CancellationToken? cancelToken,
@@ -86,7 +85,7 @@ abstract class SimpleHttpClient {
   /// Returns the parsed JSON object.
   ///
   /// The [cancelToken] is used to cancel the request.
-  /// Throws [SimpleErrorResponseException] if the response status code is not 2xx.
+  /// Throws [SimpleErrorResponseException] if the response status code is not `2xx`.
   /// Throws [SimpleTimeoutException] if sending request and receiving response timeout.
   ///
   /// For more fine-grained control over the request, use [send] or [get] instead.
@@ -134,6 +133,11 @@ abstract class SimpleHttpClient {
 
   /// Sends an HTTP HEAD request with the given headers to the given URL.
   ///
+  /// The [cancelToken] is used to cancel the request.
+  /// Throws [SimpleTimeoutException] if sending request and receiving response timeout.
+  /// When the response status code is not `2xx`, the result [Future] do NOT
+  /// throws [SimpleErrorResponseException], it returns the response as normal.
+  ///
   /// For more fine-grained control over the request, use [send] instead.
   Future<http.Response> head(
     Uri url, {
@@ -142,6 +146,11 @@ abstract class SimpleHttpClient {
   });
 
   /// Sends an HTTP GET request with the given headers to the given URL.
+  ///
+  /// The [cancelToken] is used to cancel the request.
+  /// Throws [SimpleTimeoutException] if sending request and receiving response timeout.
+  /// When the response status code is not `2xx`, the result [Future] do NOT
+  /// throws [SimpleErrorResponseException], it returns the response as normal.
   ///
   /// For more fine-grained control over the request, use [send] instead.
   Future<http.Response> get(
@@ -169,6 +178,11 @@ abstract class SimpleHttpClient {
   ///
   /// [encoding] defaults to [utf8].
   ///
+  /// The [cancelToken] is used to cancel the request.
+  /// Throws [SimpleTimeoutException] if sending request and receiving response timeout.
+  /// When the response status code is not `2xx`, the result [Future] do NOT
+  /// throws [SimpleErrorResponseException], it returns the response as normal.
+  ///
   /// For more fine-grained control over the request, use [send] instead.
   Future<http.Response> post(
     Uri url, {
@@ -194,6 +208,11 @@ abstract class SimpleHttpClient {
   /// `"application/x-www-form-urlencoded"`; this cannot be overridden.
   ///
   /// [encoding] defaults to [utf8].
+  ///
+  /// The [cancelToken] is used to cancel the request.
+  /// Throws [SimpleTimeoutException] if sending request and receiving response timeout.
+  /// When the response status code is not `2xx`, the result [Future] do NOT
+  /// throws [SimpleErrorResponseException], it returns the response as normal.
   ///
   /// For more fine-grained control over the request, use [send] instead.
   Future<http.Response> put(
@@ -221,6 +240,11 @@ abstract class SimpleHttpClient {
   ///
   /// [encoding] defaults to [utf8].
   ///
+  /// The [cancelToken] is used to cancel the request.
+  /// Throws [SimpleTimeoutException] if sending request and receiving response timeout.
+  /// When the response status code is not `2xx`, the result [Future] do NOT
+  /// throws [SimpleErrorResponseException], it returns the response as normal.
+  ///
   /// For more fine-grained control over the request, use [send] instead.
   Future<http.Response> patch(
     Uri url, {
@@ -231,6 +255,11 @@ abstract class SimpleHttpClient {
   });
 
   /// Sends an HTTP DELETE request with the given headers to the given URL.
+  ///
+  /// The [cancelToken] is used to cancel the request.
+  /// Throws [SimpleTimeoutException] if sending request and receiving response timeout.
+  /// When the response status code is not `2xx`, the result [Future] do NOT
+  /// throws [SimpleErrorResponseException], it returns the response as normal.
   ///
   /// For more fine-grained control over the request, use [send] instead.
   Future<http.Response> delete(
@@ -247,6 +276,11 @@ abstract class SimpleHttpClient {
   /// The Future will emit a [ClientException] if the response doesn't have a
   /// success status code.
   ///
+  /// The [cancelToken] is used to cancel the request.
+  /// Throws [SimpleTimeoutException] if sending request and receiving response timeout.
+  /// When the response status code is not `2xx`, the result [Future] do NOT
+  /// throws [SimpleErrorResponseException], it returns the response as normal.
+  ///
   /// For more fine-grained control over the request and response, use [send] or
   /// [get] instead.
   Future<String> read(
@@ -261,6 +295,11 @@ abstract class SimpleHttpClient {
   ///
   /// The Future will emit a [ClientException] if the response doesn't have a
   /// success status code.
+  ///
+  /// The [cancelToken] is used to cancel the request.
+  /// Throws [SimpleTimeoutException] if sending request and receiving response timeout.
+  /// When the response status code is not `2xx`, the result [Future] do NOT
+  /// throws [SimpleErrorResponseException], it returns the response as normal.
   ///
   /// For more fine-grained control over the request and response, use [send] or
   /// [get] instead.
