@@ -104,7 +104,18 @@ abstract class SimpleHttpClient {
     CancellationToken? cancelToken,
   });
 
-  /// TODO(docs)
+  /// Sends an HTTP POST request with the given headers and body to the given
+  /// URL.
+  ///
+  /// The `content-type` of the request will be set to [jsonUtf8ContentType].
+  /// The body will be encoded as JSON string.
+  /// Returns the parsed JSON object.
+  ///
+  /// The [cancelToken] is used to cancel the request.
+  /// Throws [SimpleErrorResponseException] if the response status code is not `2xx`.
+  /// Throws [SimpleTimeoutException] if sending request and receiving response timeout.
+  ///
+  /// For more fine-grained control over the request, use [send] or [post] instead.
   Future<dynamic> postJson(
     Uri url, {
     Map<String, String>? headers,

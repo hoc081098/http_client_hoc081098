@@ -1,6 +1,8 @@
 import 'package:http/http.dart' as http;
 
-/// TODO(docs)
+import 'interface.dart';
+
+/// Exception thrown by [SimpleHttpClient].
 class SimpleHttpClientException implements Exception {
   const SimpleHttpClientException._();
 }
@@ -9,6 +11,9 @@ class SimpleHttpClientException implements Exception {
 class SimpleTimeoutException extends SimpleHttpClientException {
   /// The (frozen) request.
   final http.BaseRequest request;
+
+  /// The URL to which the request will be sent.
+  Uri? get url => request.url;
 
   /// TODO(docs)
   SimpleTimeoutException(this.request) : super._();
