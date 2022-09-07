@@ -33,7 +33,7 @@ abstract class SimpleHttpClient {
   /// Multi-part form data content type.
   static const multipartContentType = 'multipart/form-data';
 
-  /// TODO(docs)
+  /// Construct a new [SimpleHttpClient].
   factory SimpleHttpClient({
     required http.Client client,
     Duration? timeout,
@@ -108,21 +108,44 @@ abstract class SimpleHttpClient {
   //
   //
 
-  /// TODO(docs)
+  /// Sends an HTTP HEAD request with the given headers to the given URL.
+  ///
+  /// For more fine-grained control over the request, use [send] instead.
   Future<http.Response> head(
     Uri url, {
     Map<String, String>? headers,
     CancellationToken? cancelToken,
   });
 
-  /// TODO(docs)
+  /// Sends an HTTP GET request with the given headers to the given URL.
+  ///
+  /// For more fine-grained control over the request, use [send] instead.
   Future<http.Response> get(
     Uri url, {
     Map<String, String>? headers,
     CancellationToken? cancelToken,
   });
 
-  /// TODO(docs)
+  /// Sends an HTTP POST request with the given headers and body to the given
+  /// URL.
+  ///
+  /// [body] sets the body of the request. It can be a [String], a [List<int>]
+  /// or a [Map<String, String>].
+  ///
+  /// If [body] is a String, it's encoded using [encoding] and used as the body
+  /// of the request. The content-type of the request will default to
+  /// "text/plain".
+  ///
+  /// If [body] is a List, it's used as a list of bytes for the body of the
+  /// request.
+  ///
+  /// If [body] is a Map, it's encoded as form fields using [encoding]. The
+  /// content-type of the request will be set to
+  /// `"application/x-www-form-urlencoded"`; this cannot be overridden.
+  ///
+  /// [encoding] defaults to [utf8].
+  ///
+  /// For more fine-grained control over the request, use [send] instead.
   Future<http.Response> post(
     Uri url, {
     Map<String, String>? headers,
@@ -131,7 +154,24 @@ abstract class SimpleHttpClient {
     CancellationToken? cancelToken,
   });
 
-  /// TODO(docs)
+  /// Sends an HTTP PUT request with the given headers and body to the given
+  /// URL.
+  ///
+  /// [body] sets the body of the request. It can be a [String], a [List<int>]
+  /// or a [Map<String, String>]. If it's a String, it's encoded using
+  /// [encoding] and used as the body of the request. The content-type of the
+  /// request will default to "text/plain".
+  ///
+  /// If [body] is a List, it's used as a list of bytes for the body of the
+  /// request.
+  ///
+  /// If [body] is a Map, it's encoded as form fields using [encoding]. The
+  /// content-type of the request will be set to
+  /// `"application/x-www-form-urlencoded"`; this cannot be overridden.
+  ///
+  /// [encoding] defaults to [utf8].
+  ///
+  /// For more fine-grained control over the request, use [send] instead.
   Future<http.Response> put(
     Uri url, {
     Map<String, String>? headers,
@@ -140,7 +180,24 @@ abstract class SimpleHttpClient {
     CancellationToken? cancelToken,
   });
 
-  /// TODO(docs)
+  /// Sends an HTTP PATCH request with the given headers and body to the given
+  /// URL.
+  ///
+  /// [body] sets the body of the request. It can be a [String], a [List<int>]
+  /// or a [Map<String, String>]. If it's a String, it's encoded using
+  /// [encoding] and used as the body of the request. The content-type of the
+  /// request will default to "text/plain".
+  ///
+  /// If [body] is a List, it's used as a list of bytes for the body of the
+  /// request.
+  ///
+  /// If [body] is a Map, it's encoded as form fields using [encoding]. The
+  /// content-type of the request will be set to
+  /// `"application/x-www-form-urlencoded"`; this cannot be overridden.
+  ///
+  /// [encoding] defaults to [utf8].
+  ///
+  /// For more fine-grained control over the request, use [send] instead.
   Future<http.Response> patch(
     Uri url, {
     Map<String, String>? headers,
@@ -149,7 +206,9 @@ abstract class SimpleHttpClient {
     CancellationToken? cancelToken,
   });
 
-  /// TODO(docs)
+  /// Sends an HTTP DELETE request with the given headers to the given URL.
+  ///
+  /// For more fine-grained control over the request, use [send] instead.
   Future<http.Response> delete(
     Uri url, {
     Map<String, String>? headers,
@@ -158,20 +217,38 @@ abstract class SimpleHttpClient {
     CancellationToken? cancelToken,
   });
 
-  /// TODO(docs)
+  /// Sends an HTTP GET request with the given headers to the given URL and
+  /// returns a Future that completes to the body of the response as a String.
+  ///
+  /// The Future will emit a [ClientException] if the response doesn't have a
+  /// success status code.
+  ///
+  /// For more fine-grained control over the request and response, use [send] or
+  /// [get] instead.
   Future<String> read(
     Uri url, {
     Map<String, String>? headers,
     CancellationToken? cancelToken,
   });
 
-  /// TODO(docs)
+  /// Sends an HTTP GET request with the given headers to the given URL and
+  /// returns a Future that completes to the body of the response as a list of
+  /// bytes.
+  ///
+  /// The Future will emit a [ClientException] if the response doesn't have a
+  /// success status code.
+  ///
+  /// For more fine-grained control over the request and response, use [send] or
+  /// [get] instead.
   Future<Uint8List> readBytes(
     Uri url, {
     Map<String, String>? headers,
     CancellationToken? cancelToken,
   });
 
-  /// TODO(docs)
+  /// Closes the client and cleans up any resources associated with it.
+  ///
+  /// It's important to close each client when it's done being used; failing to
+  /// do so can cause the Dart process to hang.
   void close();
 }
