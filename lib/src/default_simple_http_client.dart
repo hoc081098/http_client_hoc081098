@@ -70,7 +70,8 @@ class DefaultSimpleHttpClient implements SimpleHttpClient {
         HttpHeaders.contentTypeHeader: SimpleHttpClient.multipartContentType,
       });
 
-    return send(request, cancelToken).then<dynamic>(_parseJsonOrThrow);
+    return send(request, cancelToken: cancelToken)
+        .then<dynamic>(_parseJsonOrThrow);
   }
 
   @override
@@ -121,9 +122,9 @@ class DefaultSimpleHttpClient implements SimpleHttpClient {
 
   @override
   Future<http.Response> send(
-    http.BaseRequest request,
+    http.BaseRequest request, {
     CancellationToken? cancelToken,
-  ) =>
+  }) =>
       cancelToken == null
           ? _sendInternal(request, null)
           : cancelToken.guardFuture(() => _sendInternal(request, cancelToken));

@@ -54,9 +54,13 @@ abstract class SimpleHttpClient {
 
   /// Sends an HTTP request and asynchronously returns the response.
   Future<http.Response> send(
-    http.BaseRequest request,
+    http.BaseRequest request, {
     CancellationToken? cancelToken,
-  );
+  });
+
+  //
+  //
+  //
 
   /// Sends an HTTP GET request with the given headers to the given URL.
   /// Returns the resulting JSON object.
@@ -168,9 +172,6 @@ abstract class SimpleHttpClient {
     CancellationToken? cancelToken,
   });
 
-  /// Closes the client and cleans up any resources associated with it.
-  ///
-  /// It's important to close each client when it's done being used; failing to
-  /// do so can cause the Dart process to hang.
+  /// TODO(docs)
   void close();
 }
