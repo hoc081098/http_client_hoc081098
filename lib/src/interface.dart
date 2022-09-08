@@ -142,7 +142,14 @@ abstract class SimpleHttpClient {
     CancellationToken? cancelToken,
   });
 
-  /// TODO(docs)
+  /// Sends an HTTP DELETE request with the given headers to the given URL.
+  ///
+  /// The [cancelToken] is used to cancel the request.
+  /// Throws [SimpleTimeoutException] if sending request and receiving response timeout.
+  /// When the response status code is not `2xx`, the result [Future] do NOT
+  /// throws [SimpleErrorResponseException], it returns the response as normal.
+  ///
+  /// For more fine-grained control over the request, use [send] or [delete] instead.
   Future<dynamic> deleteJson(
     Uri url, {
     Map<String, String>? headers,
