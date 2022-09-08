@@ -282,7 +282,7 @@ class DefaultSimpleHttpClient implements SimpleHttpClient {
 
     // intercept the response
     if (_responseInterceptors.isNotEmpty) {
-      /// TODO: https://github.com/dart-lang/http/issues/782: cupertino_http: BaseResponse.request is null
+      /// FIXME: https://github.com/dart-lang/http/issues/782: cupertino_http: BaseResponse.request is null
       final request = interceptedRequest;
 
       final interceptedResponse =
