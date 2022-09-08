@@ -5,14 +5,17 @@ import 'package:http/http.dart' as http;
 import 'interface.dart';
 
 /// Exception thrown by [SimpleHttpClient].
-class SimpleHttpClientException implements Exception {
+abstract class SimpleHttpClientException implements Exception {
+  /// The (frozen) request.
+  http.BaseRequest? get request;
+
   const SimpleHttpClientException._();
 }
 
 /// The exception thrown by [SimpleHttpClient] when the sending of a request
 /// and receiving of a response time-out.
 class SimpleTimeoutException extends SimpleHttpClientException {
-  /// The (frozen) request.
+  @override
   final http.BaseRequest request;
 
   /// The URL to which the request will be sent.
@@ -39,6 +42,7 @@ class SimpleErrorResponseException extends SimpleHttpClientException {
   final http.Response response;
 
   /// The (frozen) request that triggered [response].
+  @override
   http.BaseRequest? get request => response.request;
 
   /// The HTTP status code for [response].
