@@ -90,7 +90,7 @@ enum SimpleLogLevel {
 
 /// The logger that logs request and response information.
 class SimpleLogger {
-  /// TODO(docs)
+  /// Default logger tag.
   static const defaultTag = '🚀 [SIMPLE-HTTP-CLIENT] ';
   static const _indent = '  • ';
 
@@ -100,7 +100,15 @@ class SimpleLogger {
   final SimpleLogLevel level;
   final Set<String> _headersToRedact;
 
-  /// TODO(docs)
+  /// Construct a [SimpleLogger]
+  ///
+  /// Parameters:
+  /// * [loggerFunction]: The function that accepts a message string and does something with it.
+  ///   Default is [print] (print to console).
+  /// * [level]: The logging level. Default is [SimpleLogLevel.none].
+  /// * [tag]: The logger tag. Default is [defaultTag].
+  /// * [headersToRedact]: A set of header names that should be redacted in the log.
+  ///   Default is empty set.
   SimpleLogger({
     LoggerFunction loggerFunction = print,
     this.level = SimpleLogLevel.none,
@@ -109,6 +117,7 @@ class SimpleLogger {
   })  : _loggerFunction = ((s) => loggerFunction(tag + s)),
         _headersToRedact = Set.unmodifiable(headersToRedact);
 
+  /// Logs request information.
   void logRequest(http.BaseRequest request) {
     if (level == SimpleLogLevel.none) {
       return;
@@ -122,6 +131,7 @@ class SimpleLogger {
     );
   }
 
+  /// Logs response information.
   void logResponse(http.Response response) {
     if (level == SimpleLogLevel.none) {
       return;

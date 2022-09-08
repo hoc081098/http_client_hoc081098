@@ -41,6 +41,7 @@ abstract class SimpleHttpClient {
   static const multipartFormDataContentType = 'multipart/form-data';
 
   /// Construct a new [SimpleHttpClient].
+  ///
   /// Parameters:
   /// * [client]: The underlying HTTP client.
   /// * [requestInterceptors]: The request interceptors.
