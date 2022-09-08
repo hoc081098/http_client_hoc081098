@@ -68,7 +68,6 @@ void main() async {
     await Future<void>.delayed(const Duration(milliseconds: 120));
     await subscription.cancel();
     print('Cancelling single...');
-    // client.close();
   }();
 
   await Future<void>.delayed(const Duration(seconds: 1));
@@ -87,4 +86,6 @@ void main() async {
   } catch (e) {
     print(e);
   }
+
+  client.close();
 }

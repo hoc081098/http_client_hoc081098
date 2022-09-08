@@ -37,8 +37,8 @@ abstract class SimpleHttpClient {
   /// JSON utf8 content type.
   static const jsonUtf8ContentType = 'application/json; charset=utf-8';
 
-  /// Multi-part form data content type.
-  static const multipartContentType = 'multipart/form-data';
+  /// Multipart form data content type.
+  static const multipartFormDataContentType = 'multipart/form-data';
 
   /// Construct a new [SimpleHttpClient].
   /// Parameters:
@@ -95,7 +95,19 @@ abstract class SimpleHttpClient {
     CancellationToken? cancelToken,
   });
 
-  /// TODO(docs)
+  /// Sends an Multipart Form Data HTTP POST request with the given headers, [files] and [fields]
+  /// to the given URL.
+  ///
+  /// [files] is the list of files to upload for this request.
+  /// [fields] is the form fields to send for this request.
+  /// The `content-type` header of the request will be set to [multipartFormDataContentType].
+  /// Returns the parsed JSON object.
+  ///
+  /// The [cancelToken] is used to cancel the request.
+  /// Throws [SimpleErrorResponseException] if the response status code is not `2xx`.
+  /// Throws [SimpleTimeoutException] if sending request and receiving response timeout.
+  ///
+  /// For more fine-grained control over the request, use [send] or [post] instead.
   Future<dynamic> postMultipart(
     Uri url,
     List<http.MultipartFile> files, {

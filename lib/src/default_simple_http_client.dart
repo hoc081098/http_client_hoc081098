@@ -67,7 +67,8 @@ class DefaultSimpleHttpClient implements SimpleHttpClient {
       ..files.addAll(files)
       ..headers.addAll(<String, String>{
         ...?headers,
-        HttpHeaders.contentTypeHeader: SimpleHttpClient.multipartContentType,
+        HttpHeaders.contentTypeHeader:
+            SimpleHttpClient.multipartFormDataContentType,
       });
 
     return send(request, cancelToken: cancelToken)
