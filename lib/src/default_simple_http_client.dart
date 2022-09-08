@@ -320,17 +320,9 @@ class DefaultSimpleHttpClient implements SimpleHttpClient {
         : cancelToken.guardFuture(block);
   }
 
-  dynamic _parseJsonOrThrow(http.Response response) {
-    final statusCode = response.statusCode;
-    final body = response.body;
-
-    if (HttpStatus.ok <= statusCode &&
-        statusCode <= HttpStatus.multipleChoices) {
-      return _jsonDecoder(body);
-    }
-
-    throw SimpleErrorResponseException(response);
-  }
+  dynamic _parseJsonOrThrow(http.Response response) => response.isSuccessful
+      ? _jsonDecoder(response.body)
+      : throw SimpleErrorResponseException(response);
 
   String? _bodyToString(Object? body) =>
       body != null ? _jsonEncoder(body) : null;
