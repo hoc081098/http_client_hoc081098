@@ -7,7 +7,7 @@ import 'user.dart';
 
 void main() async {
   final loggingInterceptor = SimpleLoggingInterceptor(
-    DefaultSimpleHttpClientLogger(
+    SimpleLogger(
       level: SimpleLogLevel.body,
       headersToRedact: {
         HttpHeaders.authorizationHeader,

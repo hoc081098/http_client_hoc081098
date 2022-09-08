@@ -30,17 +30,9 @@ class SimpleLoggingInterceptor {
   };
 }
 
-/// TODO(docs)
+/// A function that accepts a message string and does something with it,
+/// such as logging it, ...
 typedef LoggerFunction = void Function(String message);
-
-/// TODO(docs)
-abstract class SimpleLogger {
-  /// Logging HTTP request.
-  void logRequest(http.BaseRequest request);
-
-  /// Logging HTTP response.
-  void logResponse(http.Response response);
-}
 
 /// The log level.
 enum SimpleLogLevel {
@@ -96,8 +88,8 @@ enum SimpleLogLevel {
   body,
 }
 
-/// The default implementation of [SimpleLogger] that logs request and response information.
-class DefaultSimpleHttpClientLogger implements SimpleLogger {
+/// The logger that logs request and response information.
+class SimpleLogger {
   /// TODO(docs)
   static const defaultTag = '🚀 [SIMPLE-HTTP-CLIENT] ';
   static const _indent = '  • ';
@@ -109,7 +101,7 @@ class DefaultSimpleHttpClientLogger implements SimpleLogger {
   final Set<String> _headersToRedact;
 
   /// TODO(docs)
-  DefaultSimpleHttpClientLogger({
+  SimpleLogger({
     LoggerFunction loggerFunction = print,
     this.level = SimpleLogLevel.none,
     String tag = defaultTag,
@@ -117,7 +109,6 @@ class DefaultSimpleHttpClientLogger implements SimpleLogger {
   })  : _loggerFunction = ((s) => loggerFunction(tag + s)),
         _headersToRedact = Set.unmodifiable(headersToRedact);
 
-  @override
   void logRequest(http.BaseRequest request) {
     if (level == SimpleLogLevel.none) {
       return;
@@ -131,7 +122,6 @@ class DefaultSimpleHttpClientLogger implements SimpleLogger {
     );
   }
 
-  @override
   void logResponse(http.Response response) {
     if (level == SimpleLogLevel.none) {
       return;
