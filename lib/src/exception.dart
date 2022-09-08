@@ -7,7 +7,8 @@ class SimpleHttpClientException implements Exception {
   const SimpleHttpClientException._();
 }
 
-/// TODO(docs)
+/// The exception thrown by [SimpleHttpClient] when the sending of a request
+/// and receiving of a response time-out.
 class SimpleTimeoutException extends SimpleHttpClientException {
   /// The (frozen) request.
   final http.BaseRequest request;
@@ -15,7 +16,7 @@ class SimpleTimeoutException extends SimpleHttpClientException {
   /// The URL to which the request will be sent.
   Uri? get url => request.url;
 
-  /// TODO(docs)
+  /// Construct a [SimpleTimeoutException] with a [request].
   SimpleTimeoutException(this.request) : super._();
 
   @override

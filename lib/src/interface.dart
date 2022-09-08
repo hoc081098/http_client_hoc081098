@@ -44,6 +44,8 @@ abstract class SimpleHttpClient {
   ///
   /// Parameters:
   /// * [client]: The underlying HTTP client.
+  /// * [timeout]: The timeout for the sending of a request and receiving of a response.
+  ///   `null` means no timeout. When a timeout occurs, a [SimpleTimeoutException] will be thrown.
   /// * [requestInterceptors]: The request interceptors.
   /// * [responseInterceptors]: The response interceptors.
   /// * [jsonDecoder]: The function used to parse strings to JSON object.
