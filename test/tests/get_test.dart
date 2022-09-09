@@ -37,7 +37,10 @@ void main() {
         ),
       );
 
-      final response = await simpleClient.get(getUri('users/1'));
+      final response = await simpleClient.get(
+        getUri('users/1'),
+        headers: mockHeaders,
+      );
       verify(mockClient.send(any)).called(1);
 
       expect(response.statusCode, 200);
@@ -45,6 +48,7 @@ void main() {
 
       expect(requestsSpy.requests.length, 1);
       expect(requestsSpy.requests[0].url, getUri('users/1'));
+      expectMockHeaders(requestsSpy.requests[0]);
     });
 
     test('non-200 response', () async {
@@ -57,7 +61,10 @@ void main() {
         ),
       );
 
-      final response = await simpleClient.get(getUri('users/1'));
+      final response = await simpleClient.get(
+        getUri('users/1'),
+        headers: mockHeaders,
+      );
       verify(mockClient.send(any)).called(1);
 
       expect(response.statusCode, 500);
@@ -65,6 +72,7 @@ void main() {
 
       expect(requestsSpy.requests.length, 1);
       expect(requestsSpy.requests[0].url, getUri('users/1'));
+      expectMockHeaders(requestsSpy.requests[0]);
     });
 
     test('throw exception', () async {
@@ -73,13 +81,17 @@ void main() {
       );
 
       await expectLater(
-        simpleClient.get(getUri('users/1')),
+        simpleClient.get(
+          getUri('users/1'),
+          headers: mockHeaders,
+        ),
         throwsA(isA<SocketException>()),
       );
       verify(mockClient.send(any)).called(1);
 
       expect(requestsSpy.requests.length, 1);
       expect(requestsSpy.requests[0].url, getUri('users/1'));
+      expectMockHeaders(requestsSpy.requests[0]);
     });
   });
 }

@@ -40,6 +40,7 @@ void main() {
       final response = await simpleClient.post(
         getUri('users'),
         body: getFixtureString('user.json'),
+        headers: mockHeaders,
       );
       verify(mockClient.send(any)).called(1);
 
@@ -52,6 +53,7 @@ void main() {
         (requestsSpy.requests[0] as http.Request).body,
         getFixtureString('user.json'),
       );
+      expectMockHeaders(requestsSpy.requests[0]);
     });
 
     test('non-200 response', () async {
@@ -67,6 +69,7 @@ void main() {
       final response = await simpleClient.post(
         getUri('users'),
         body: getFixtureString('user.json'),
+        headers: mockHeaders,
       );
       verify(mockClient.send(any)).called(1);
 
@@ -79,6 +82,7 @@ void main() {
         (requestsSpy.requests[0] as http.Request).body,
         getFixtureString('user.json'),
       );
+      expectMockHeaders(requestsSpy.requests[0]);
     });
 
     test('throw exception', () async {
@@ -90,6 +94,7 @@ void main() {
         simpleClient.post(
           getUri('users'),
           body: getFixtureString('user.json'),
+          headers: mockHeaders,
         ),
         throwsA(isA<SocketException>()),
       );
@@ -101,6 +106,7 @@ void main() {
         (requestsSpy.requests[0] as http.Request).body,
         getFixtureString('user.json'),
       );
+      expectMockHeaders(requestsSpy.requests[0]);
     });
   });
 }

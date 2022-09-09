@@ -1,10 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:mockito/mockito.dart';
 import 'package:http/http.dart' as http;
-
-import 'mock.mocks.dart';
+import 'package:test/test.dart';
 
 Uri getUri(String unencodedPath) => Uri.https('hoc081098.com', unencodedPath);
 
@@ -25,6 +23,14 @@ Future<http.StreamedResponse> responseToStreamedResponse(
       persistentConnection: response.persistentConnection,
       reasonPhrase: response.reasonPhrase,
     );
+
+const _key = 'custom-header';
+const _value = 'custom-value';
+
+const mockHeaders = {_key: _value};
+
+void expectMockHeaders(http.BaseRequest request) =>
+    expect(request.headers[_key], _value);
 
 class RequestsSpy {
   final _requests = <http.BaseRequest>[];
