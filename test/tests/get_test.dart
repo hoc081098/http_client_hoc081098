@@ -93,5 +93,31 @@ void main() {
       expect(requestsSpy.requests[0].url, getUri('users/1'));
       expectMockHeaders(requestsSpy.requests[0]);
     });
+
+    test('cancel', () async {
+      when(mockClient.send(any)).thenAnswer(
+        (_) => responseToStreamedResponse(
+          http.Response(
+            getFixtureString('user.json'),
+            200,
+          ),
+        ),
+      );
+      final cancelToken = CancellationToken();
+
+      final future = expectLater(
+        simpleClient.get(
+          getUri('users/1'),
+          headers: mockHeaders,
+          cancelToken: cancelToken,
+        ),
+        throwsA(isA<CancellationException>()),
+      );
+      cancelToken.cancel();
+
+      await future;
+      verifyNever(mockClient.send(any));
+      expect(requestsSpy.requests.isEmpty, isTrue);
+    });
   });
 }
