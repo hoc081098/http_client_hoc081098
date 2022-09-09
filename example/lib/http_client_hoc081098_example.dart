@@ -34,10 +34,6 @@ void main() async {
     ],
   );
 
-  final response = await client
-      .get(Uri.parse('https://jsonplaceholder.typicode.com/users/1'));
-  SimpleErrorResponseException(response);
-
   final cancelToken = CancellationToken();
   final uri = Uri.parse('https://jsonplaceholder.typicode.com/users/1');
 
