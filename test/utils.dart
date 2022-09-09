@@ -25,3 +25,16 @@ Future<http.StreamedResponse> responseToStreamedResponse(
       persistentConnection: response.persistentConnection,
       reasonPhrase: response.reasonPhrase,
     );
+
+class RequestsSpy {
+  final _requests = <http.BaseRequest>[];
+
+  void clear() => _requests.clear();
+
+  List<http.BaseRequest> get requests => List.unmodifiable(_requests);
+
+  http.BaseRequest call(http.BaseRequest req) {
+    _requests.add(req);
+    return req;
+  }
+}

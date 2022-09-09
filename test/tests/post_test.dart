@@ -9,7 +9,7 @@ import '../mock.mocks.dart';
 import '../utils.dart';
 
 void main() {
-  group('SimpleHttpClient.get', () {
+  group('SimpleHttpClient.post', () {
     late SimpleHttpClient simpleClient;
     late MockClient mockClient;
     final requestsSpy = RequestsSpy();
@@ -32,19 +32,26 @@ void main() {
         (_) => responseToStreamedResponse(
           http.Response(
             getFixtureString('user.json'),
-            200,
+            201,
           ),
         ),
       );
 
-      final response = await simpleClient.get(getUri('users/1'));
+      final response = await simpleClient.post(
+        getUri('users'),
+        body: getFixtureString('user.json'),
+      );
       verify(mockClient.send(any)).called(1);
 
-      expect(response.statusCode, 200);
+      expect(response.statusCode, 201);
       expect(response.body, getFixtureString('user.json'));
 
       expect(requestsSpy.requests.length, 1);
-      expect(requestsSpy.requests[0].url, getUri('users/1'));
+      expect(requestsSpy.requests[0].url, getUri('users'));
+      expect(
+        (requestsSpy.requests[0] as http.Request).body,
+        getFixtureString('user.json'),
+      );
     });
 
     test('non-200 response', () async {
@@ -57,14 +64,21 @@ void main() {
         ),
       );
 
-      final response = await simpleClient.get(getUri('users/1'));
+      final response = await simpleClient.post(
+        getUri('users'),
+        body: getFixtureString('user.json'),
+      );
       verify(mockClient.send(any)).called(1);
 
       expect(response.statusCode, 500);
       expect(response.body, getFixtureString('error.json'));
 
       expect(requestsSpy.requests.length, 1);
-      expect(requestsSpy.requests[0].url, getUri('users/1'));
+      expect(requestsSpy.requests[0].url, getUri('users'));
+      expect(
+        (requestsSpy.requests[0] as http.Request).body,
+        getFixtureString('user.json'),
+      );
     });
 
     test('throw exception', () async {
@@ -73,13 +87,20 @@ void main() {
       );
 
       await expectLater(
-        simpleClient.get(getUri('users/1')),
+        simpleClient.post(
+          getUri('users'),
+          body: getFixtureString('user.json'),
+        ),
         throwsA(isA<SocketException>()),
       );
       verify(mockClient.send(any)).called(1);
 
       expect(requestsSpy.requests.length, 1);
-      expect(requestsSpy.requests[0].url, getUri('users/1'));
+      expect(requestsSpy.requests[0].url, getUri('users'));
+      expect(
+        (requestsSpy.requests[0] as http.Request).body,
+        getFixtureString('user.json'),
+      );
     });
   });
 }
