@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:http_client_hoc081098/http_client_hoc081098.dart';
 import 'package:http/http.dart' as http;
 import 'package:mockito/mockito.dart';
@@ -30,7 +32,7 @@ void main() {
       requests.clear();
     });
 
-    test('success', () async {
+    test('200 response', () async {
       when(mockClient.send(any)).thenAnswer(
         (_) => responseToStreamedResponse(
           http.Response(
@@ -50,7 +52,7 @@ void main() {
       expect(requests[0].url, getUri('users/1'));
     });
 
-    test('failure', () async {
+    test('non-200 response', () async {
       when(mockClient.send(any)).thenAnswer(
         (_) => responseToStreamedResponse(
           http.Response(
@@ -65,6 +67,21 @@ void main() {
 
       expect(response.statusCode, 500);
       expect(response.body, getFixtureString('error.json'));
+
+      expect(requests.length, 1);
+      expect(requests[0].url, getUri('users/1'));
+    });
+
+    test('throw exception', () async {
+      when(mockClient.send(any)).thenAnswer(
+        (_) => throw const SocketException.closed(),
+      );
+
+      await expectLater(
+        simpleClient.get(getUri('users/1')),
+        throwsA(isA<SocketException>()),
+      );
+      verify(mockClient.send(any)).called(1);
 
       expect(requests.length, 1);
       expect(requests[0].url, getUri('users/1'));
