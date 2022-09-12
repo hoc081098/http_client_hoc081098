@@ -282,23 +282,34 @@ class DefaultSimpleHttpClient implements SimpleHttpClient {
 
     // intercept the response
     if (_responseInterceptors.isNotEmpty) {
-      /// FIXME: https://github.com/dart-lang/http/issues/782: cupertino_http: BaseResponse.request is null
-      final request = interceptedRequest;
-
-      final interceptedResponse =
-          await _responseInterceptors.fold<Future<http.Response>>(
-        _value(response, cancelToken),
-        (acc, interceptor) => acc.then((res) {
-          cancelToken?.guard();
-          return interceptor(request, res);
-        }),
+      final interceptedResponse = await _runResponseInterceptors(
+        interceptedRequest,
+        response,
+        cancelToken,
       );
 
       cancelToken?.guard();
+
       return interceptedResponse;
     } else {
       return response;
     }
+  }
+
+  Future<http.Response> _runResponseInterceptors(
+    http.BaseRequest interceptedRequest,
+    http.Response response,
+    CancellationToken? cancelToken,
+  ) {
+    final request = response.request ?? interceptedRequest;
+
+    return _responseInterceptors.fold<Future<http.Response>>(
+      _value(response, cancelToken),
+      (acc, interceptor) => acc.then((res) {
+        cancelToken?.guard();
+        return interceptor(request, res);
+      }),
+    );
   }
 
   /// Sends a non-streaming [Request] and returns a non-streaming [Response].

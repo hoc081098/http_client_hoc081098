@@ -127,7 +127,7 @@ void main() {
           headers: mockHeaders,
           cancelToken: cancelToken,
         ),
-        throwsA(isA<CancellationException>()),
+        throwsACancellationException,
       );
       cancelToken.cancel();
 

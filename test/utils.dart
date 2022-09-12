@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:cancellation_token_hoc081098/cancellation_token_hoc081098.dart';
+import 'package:collection/collection.dart';
 import 'package:http/http.dart' as http;
 import 'package:test/test.dart';
 
@@ -29,6 +31,8 @@ const _value = 'custom-value';
 
 const mockHeaders = {_key: _value};
 
+final throwsACancellationException = throwsA(isA<CancellationException>());
+
 void expectMockHeaders(http.BaseRequest request) =>
     expect(request.headers[_key], _value);
 
@@ -43,4 +47,14 @@ class RequestsSpy {
     _requests.add(req);
     return req;
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is RequestsSpy &&
+          runtimeType == other.runtimeType &&
+          const ListEquality<http.BaseRequest>().equals(_requests, _requests);
+
+  @override
+  int get hashCode => _requests.hashCode;
 }
