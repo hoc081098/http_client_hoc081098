@@ -118,18 +118,16 @@ void main() {
           ),
         ),
       );
-      final cancelToken = CancellationToken();
 
       final future = expectLater(
         simpleClient.put(
           getUri('users'),
           body: getFixtureString('user.json'),
           headers: mockHeaders,
-          cancelToken: cancelToken,
+          cancelToken: CancellationToken()..cancel(),
         ),
         throwsACancellationException,
       );
-      cancelToken.cancel();
 
       await future;
       verifyNever(mockClient.send(any));
