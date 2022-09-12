@@ -103,17 +103,15 @@ void main() {
           ),
         ),
       );
-      final cancelToken = CancellationToken();
 
       final future = expectLater(
         simpleClient.get(
           getUri('users/1'),
           headers: mockHeaders,
-          cancelToken: cancelToken,
+          cancelToken: CancellationToken()..cancel(),
         ),
         throwsACancellationException,
       );
-      cancelToken.cancel();
 
       await future;
       verifyNever(mockClient.send(any));
