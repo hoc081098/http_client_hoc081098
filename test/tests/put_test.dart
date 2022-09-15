@@ -49,6 +49,7 @@ void main() {
 
       expect(requestsSpy.requests.length, 1);
       expect(requestsSpy.requests[0].url, getUri('users'));
+      expect(requestsSpy.requests[0].method, 'PUT');
       expect(
         (requestsSpy.requests[0] as http.Request).body,
         getFixtureString('user.json'),
@@ -78,6 +79,7 @@ void main() {
 
       expect(requestsSpy.requests.length, 1);
       expect(requestsSpy.requests[0].url, getUri('users'));
+      expect(requestsSpy.requests[0].method, 'PUT');
       expect(
         (requestsSpy.requests[0] as http.Request).body,
         getFixtureString('user.json'),
@@ -102,6 +104,7 @@ void main() {
 
       expect(requestsSpy.requests.length, 1);
       expect(requestsSpy.requests[0].url, getUri('users'));
+      expect(requestsSpy.requests[0].method, 'PUT');
       expect(
         (requestsSpy.requests[0] as http.Request).body,
         getFixtureString('user.json'),

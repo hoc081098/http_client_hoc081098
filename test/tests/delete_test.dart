@@ -9,7 +9,7 @@ import '../mock.mocks.dart';
 import '../utils.dart';
 
 void main() {
-  group('SimpleHttpClient.post', () {
+  group('SimpleHttpClient.delete', () {
     late SimpleHttpClient simpleClient;
     late MockClient mockClient;
     final requestsSpy = RequestsSpy();
@@ -37,7 +37,7 @@ void main() {
         ),
       );
 
-      final response = await simpleClient.post(
+      final response = await simpleClient.delete(
         getUri('users'),
         body: getFixtureString('user.json'),
         headers: mockHeaders,
@@ -49,7 +49,7 @@ void main() {
 
       expect(requestsSpy.requests.length, 1);
       expect(requestsSpy.requests[0].url, getUri('users'));
-      expect(requestsSpy.requests[0].method, 'POST');
+      expect(requestsSpy.requests[0].method, 'DELETE');
       expect(
         (requestsSpy.requests[0] as http.Request).body,
         getFixtureString('user.json'),
@@ -67,7 +67,7 @@ void main() {
         ),
       );
 
-      final response = await simpleClient.post(
+      final response = await simpleClient.delete(
         getUri('users'),
         body: getFixtureString('user.json'),
         headers: mockHeaders,
@@ -79,7 +79,7 @@ void main() {
 
       expect(requestsSpy.requests.length, 1);
       expect(requestsSpy.requests[0].url, getUri('users'));
-      expect(requestsSpy.requests[0].method, 'POST');
+      expect(requestsSpy.requests[0].method, 'DELETE');
       expect(
         (requestsSpy.requests[0] as http.Request).body,
         getFixtureString('user.json'),
@@ -93,7 +93,7 @@ void main() {
       );
 
       await expectLater(
-        simpleClient.post(
+        simpleClient.delete(
           getUri('users'),
           body: getFixtureString('user.json'),
           headers: mockHeaders,
@@ -104,7 +104,7 @@ void main() {
 
       expect(requestsSpy.requests.length, 1);
       expect(requestsSpy.requests[0].url, getUri('users'));
-      expect(requestsSpy.requests[0].method, 'POST');
+      expect(requestsSpy.requests[0].method, 'DELETE');
       expect(
         (requestsSpy.requests[0] as http.Request).body,
         getFixtureString('user.json'),
@@ -123,7 +123,7 @@ void main() {
       );
 
       final future = expectLater(
-        simpleClient.post(
+        simpleClient.delete(
           getUri('users'),
           body: getFixtureString('user.json'),
           headers: mockHeaders,

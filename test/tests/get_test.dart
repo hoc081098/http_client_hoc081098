@@ -48,6 +48,7 @@ void main() {
 
       expect(requestsSpy.requests.length, 1);
       expect(requestsSpy.requests[0].url, getUri('users/1'));
+      expect(requestsSpy.requests[0].method, 'GET');
       expectMockHeaders(requestsSpy.requests[0]);
     });
 
@@ -72,6 +73,7 @@ void main() {
 
       expect(requestsSpy.requests.length, 1);
       expect(requestsSpy.requests[0].url, getUri('users/1'));
+      expect(requestsSpy.requests[0].method, 'GET');
       expectMockHeaders(requestsSpy.requests[0]);
     });
 
@@ -91,6 +93,7 @@ void main() {
 
       expect(requestsSpy.requests.length, 1);
       expect(requestsSpy.requests[0].url, getUri('users/1'));
+      expect(requestsSpy.requests[0].method, 'GET');
       expectMockHeaders(requestsSpy.requests[0]);
     });
 
