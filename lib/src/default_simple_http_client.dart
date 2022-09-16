@@ -81,16 +81,20 @@ class DefaultSimpleHttpClient implements SimpleHttpClient {
     Map<String, String>? headers,
     Object? body,
     CancellationToken? cancelToken,
-  }) =>
-      post(
-        url,
-        cancelToken: cancelToken,
-        headers: {
-          ...?headers,
-          HttpHeaders.contentTypeHeader: SimpleHttpClient.jsonUtf8ContentType,
-        },
-        body: _bodyToString(body),
-      ).then<dynamic>(_parseJsonOrThrow);
+  }) {
+    Future<dynamic> doPost(String? body) => post(
+          url,
+          cancelToken: cancelToken,
+          headers: {
+            ...?headers,
+            HttpHeaders.contentTypeHeader: SimpleHttpClient.jsonUtf8ContentType,
+          },
+          body: body,
+        ).then<dynamic>(_parseJsonOrThrow);
+
+    final bodyFuture = _bodyToString(body);
+    return bodyFuture == null ? doPost(null) : bodyFuture.then<dynamic>(doPost);
+  }
 
   @override
   Future<dynamic> putJson(
@@ -98,16 +102,20 @@ class DefaultSimpleHttpClient implements SimpleHttpClient {
     Map<String, String>? headers,
     Object? body,
     CancellationToken? cancelToken,
-  }) =>
-      put(
-        url,
-        cancelToken: cancelToken,
-        headers: {
-          ...?headers,
-          HttpHeaders.contentTypeHeader: SimpleHttpClient.jsonUtf8ContentType,
-        },
-        body: _bodyToString(body),
-      ).then<dynamic>(_parseJsonOrThrow);
+  }) {
+    Future<dynamic> doPut(String? body) => put(
+          url,
+          cancelToken: cancelToken,
+          headers: {
+            ...?headers,
+            HttpHeaders.contentTypeHeader: SimpleHttpClient.jsonUtf8ContentType,
+          },
+          body: body,
+        ).then<dynamic>(_parseJsonOrThrow);
+
+    final bodyFuture = _bodyToString(body);
+    return bodyFuture == null ? doPut(null) : bodyFuture.then<dynamic>(doPut);
+  }
 
   @override
   Future<dynamic> deleteJson(
@@ -335,8 +343,8 @@ class DefaultSimpleHttpClient implements SimpleHttpClient {
       ? _jsonDecoder(response.body)
       : throw SimpleErrorResponseException(response);
 
-  String? _bodyToString(Object? body) =>
-      body != null ? _jsonEncoder(body) : null;
+  Future<String>? _bodyToString(Object? body) =>
+      body != null ? Future.sync(() => _jsonEncoder(body)) : null;
 
   static Future<T> _value<T>(T request, CancellationToken? cancelToken) {
     cancelToken?.guard();
