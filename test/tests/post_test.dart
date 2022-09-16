@@ -12,19 +12,23 @@ void main() {
   group('SimpleHttpClient.post', () {
     late SimpleHttpClient simpleClient;
     late MockClient mockClient;
+
     final requestsSpy = RequestsSpy();
+    final responseSpy = ResponseSpy();
 
     setUp(() {
       mockClient = MockClient();
       simpleClient = SimpleHttpClient(
         client: mockClient,
         requestInterceptors: [requestsSpy],
+        responseInterceptors: [responseSpy],
       );
     });
 
     tearDown(() {
       simpleClient.close();
       requestsSpy.clear();
+      responseSpy.clear();
     });
 
     test('200 response', () async {
@@ -44,6 +48,7 @@ void main() {
       );
       verify(mockClient.send(any)).called(1);
 
+      expect(responseSpy.responses.single, response);
       expect(response.statusCode, 201);
       expect(response.body, getFixtureString('user.json'));
 
@@ -74,6 +79,7 @@ void main() {
       );
       verify(mockClient.send(any)).called(1);
 
+      expect(responseSpy.responses.single, response);
       expect(response.statusCode, 500);
       expect(response.body, getFixtureString('error.json'));
 
@@ -101,6 +107,8 @@ void main() {
         throwsA(isA<SocketException>()),
       );
       verify(mockClient.send(any)).called(1);
+
+      expect(responseSpy.responses.isEmpty, isTrue);
 
       expect(requestsSpy.requests.length, 1);
       expect(requestsSpy.requests[0].url, getUri('users'));
@@ -134,6 +142,8 @@ void main() {
 
       await future;
       verifyNever(mockClient.send(any));
+
+      expect(responseSpy.responses.isEmpty, isTrue);
       expect(requestsSpy.requests.isEmpty, isTrue);
     });
   });

@@ -58,3 +58,26 @@ class RequestsSpy {
   @override
   int get hashCode => _requests.hashCode;
 }
+
+class ResponseSpy {
+  final _responses = <http.Response>[];
+
+  void clear() => _responses.clear();
+
+  List<http.Response> get responses => List.unmodifiable(_responses);
+
+  http.Response call(http.BaseRequest request, http.Response response) {
+    _responses.add(response);
+    return response;
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is ResponseSpy &&
+          runtimeType == other.runtimeType &&
+          const ListEquality<http.Response>().equals(_responses, _responses);
+
+  @override
+  int get hashCode => _responses.hashCode;
+}
