@@ -108,7 +108,7 @@ void main() {
       );
       verify(mockClient.send(any)).called(1);
 
-      expect(requestsSpy.requests.isEmpty, isTrue);
+      expect(responseSpy.responses.isEmpty, isTrue);
 
       expect(requestsSpy.requests.length, 1);
       expect(requestsSpy.requests[0].url, getUri('users'));
