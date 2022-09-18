@@ -14,7 +14,7 @@ packages:
       name: cancellation_token_hoc081098
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.0.0-beta.04"
+    version: "1.0.0"
   collection:
     dependency: transitive
     description:
