@@ -4,6 +4,8 @@ version: 0.0.1-dev.0
 homepage: https://github.com/hoc081098/http_client_hoc081098.git
 repository: https://github.com/hoc081098/http_client_hoc081098.git
 issue_tracker: https://github.com/hoc081098/http_client_hoc081098/issues
+funding:
+  - https://www.buymeacoffee.com/hoc081098
 
 environment:
   sdk: '>=2.12.0 <3.0.0'
