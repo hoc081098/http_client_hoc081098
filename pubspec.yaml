@@ -1,6 +1,6 @@
 name: http_client_hoc081098
 description: Simple and powerful HTTP client for Flutter and Dart application.
-version: 1.0.0-dev.0
+version: 0.0.1-dev.0
 homepage: https://github.com/hoc081098/http_client_hoc081098.git
 repository: https://github.com/hoc081098/http_client_hoc081098.git
 issue_tracker: https://github.com/hoc081098/http_client_hoc081098/issues
