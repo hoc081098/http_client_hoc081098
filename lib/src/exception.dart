@@ -69,10 +69,10 @@ class SimpleErrorResponseException extends SimpleHttpClientException {
   String toString() => 'SimpleErrorResponseException{response: $response}';
 }
 
-/// Provides [isErrorResponse], [isSuccessful] extension methods on [http.Response].
+/// Provides [isSuccessful] extension methods on [http.Response].
 extension ResponseExtensions on http.Response {
   /// Check if the [response] is a successful response.
   /// A successful response is a response with a status code that is in the `2xx` range.
   bool get isSuccessful =>
-      HttpStatus.ok <= statusCode && statusCode <= HttpStatus.multipleChoices;
+      HttpStatus.ok <= statusCode && statusCode < HttpStatus.multipleChoices;
 }
