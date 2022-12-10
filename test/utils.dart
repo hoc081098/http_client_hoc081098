@@ -38,12 +38,22 @@ void expectMockHeaders(http.BaseRequest request) =>
 
 class RequestsSpy {
   final _requests = <http.BaseRequest>[];
+  final _onCallListeners = <void Function(http.BaseRequest)>[];
 
-  void clear() => _requests.clear();
+  void clear() {
+    _requests.clear();
+    _onCallListeners.clear();
+  }
+
+  void addOnCallListener(void Function(http.BaseRequest) listener) =>
+      _onCallListeners.add(listener);
 
   List<http.BaseRequest> get requests => List.unmodifiable(_requests);
 
   http.BaseRequest call(http.BaseRequest req) {
+    for (final f in _onCallListeners) {
+      f(req);
+    }
     _requests.add(req);
     return req;
   }
@@ -53,10 +63,14 @@ class RequestsSpy {
       identical(this, other) ||
       other is RequestsSpy &&
           runtimeType == other.runtimeType &&
-          const ListEquality<http.BaseRequest>().equals(_requests, _requests);
+          const ListEquality<http.BaseRequest>()
+              .equals(_requests, other._requests);
 
   @override
-  int get hashCode => _requests.hashCode;
+  int get hashCode => const ListEquality<http.BaseRequest>().hash(_requests);
+
+  @override
+  String toString() => 'RequestsSpy{requests: $_requests}';
 }
 
 class ResponseSpy {
@@ -76,8 +90,9 @@ class ResponseSpy {
       identical(this, other) ||
       other is ResponseSpy &&
           runtimeType == other.runtimeType &&
-          const ListEquality<http.Response>().equals(_responses, _responses);
+          const ListEquality<http.Response>()
+              .equals(_responses, other.responses);
 
   @override
-  int get hashCode => _responses.hashCode;
+  int get hashCode => const ListEquality<http.Response>().hash(_responses);
 }
