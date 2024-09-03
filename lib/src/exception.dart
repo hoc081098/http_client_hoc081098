@@ -60,7 +60,7 @@ final class SimpleErrorResponseException extends SimpleHttpClientException {
       throw ArgumentError.value(
         response,
         'response',
-        'statusCode must be in the 2xx range',
+        'statusCode must not be in the 2xx range.',
       );
     }
   }
