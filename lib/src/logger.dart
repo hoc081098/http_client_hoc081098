@@ -172,7 +172,7 @@ class SimpleLogger {
       if (request is http.Request) {
         _loggerFunction('${_indent}bodyBytes: ${request.bodyBytes.length}');
         try {
-          _loggerFunction('${_indent}body: ' + request.body);
+          _loggerFunction('${_indent}body: ${request.body}');
         } catch (_) {}
 
         try {
@@ -189,7 +189,7 @@ class SimpleLogger {
 
   void _logHeader(String name, String value) {
     final v = _headersToRedact.contains(name) ? '██' : value;
-    _loggerFunction(_indent + name + ': ' + v);
+    _loggerFunction('$_indent$name: $v');
   }
 
   void _logResponse({
@@ -224,7 +224,7 @@ class SimpleLogger {
       _loggerFunction('${_indent}bodyBytes: ${response.bodyBytes.length}');
 
       try {
-        _loggerFunction('${_indent}body: ' + response.body);
+        _loggerFunction('${_indent}body: ${response.body}');
       } catch (_) {}
     }
 

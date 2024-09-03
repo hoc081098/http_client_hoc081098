@@ -20,8 +20,8 @@ void main() {
       mockClient = MockClient();
       simpleClient = SimpleHttpClient(
         client: mockClient,
-        requestInterceptors: [requestsSpy],
-        responseInterceptors: [responseSpy],
+        requestInterceptors: [requestsSpy.call],
+        responseInterceptors: [responseSpy.call],
       );
     });
 

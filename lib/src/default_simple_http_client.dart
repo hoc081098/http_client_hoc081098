@@ -1,15 +1,13 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:cancellation_token_hoc081098/cancellation_token_hoc081098.dart';
 import 'package:http/http.dart' as http;
 import 'package:meta/meta.dart';
 
 import 'exception.dart';
-
-import 'dart:typed_data';
-
 import 'interface.dart';
 
 /// Default implementation of [SimpleHttpClient].
@@ -136,7 +134,8 @@ class DefaultSimpleHttpClient implements SimpleHttpClient {
   }) =>
       cancelToken == null
           ? _sendInternal(request, null)
-          : cancelToken.guardFuture(() => _sendInternal(request, cancelToken));
+          : cancelToken.guardFuture(
+              (cancelToken) => _sendInternal(request, cancelToken));
 
   @override
   Future<http.Response> head(
@@ -329,7 +328,8 @@ class DefaultSimpleHttpClient implements SimpleHttpClient {
     Object? body,
     Encoding? encoding,
   }) {
-    Future<http.Response> block() => _sendInternal(
+    Future<http.Response> block([CancellationToken? cancelToken]) =>
+        _sendInternal(
           _buildRequest(method, url, headers, encoding, body),
           cancelToken,
         );
