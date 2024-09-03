@@ -1,6 +1,6 @@
 name: http_client_hoc081098
-description: Simple and powerful HTTP client for Flutter and Dart application.
-version: 0.0.1-dev.0
+description: Simple and powerful HTTP client for Flutter and Dart application, built on top of http, rxdart_ext and cancellation_token_hoc081098 packages.
+version: 0.1.0
 homepage: https://github.com/hoc081098/http_client_hoc081098.git
 repository: https://github.com/hoc081098/http_client_hoc081098.git
 issue_tracker: https://github.com/hoc081098/http_client_hoc081098/issues
@@ -9,6 +9,13 @@ funding:
 
 environment:
   sdk: ^3.0.0
+
+topics:
+  - hoc081098
+  - http
+  - http-client
+  - network
+  - interceptor
 
 dependencies:
   http: ^1.1.0
