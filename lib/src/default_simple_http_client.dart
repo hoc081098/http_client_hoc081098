@@ -1,8 +1,7 @@
 part of 'interface.dart';
 
 /// Default implementation of [SimpleHttpClient].
-@internal
-final class DefaultSimpleHttpClient implements SimpleHttpClient {
+final class _DefaultSimpleHttpClient implements SimpleHttpClient {
   final http.Client _client;
   final Duration? _timeout;
 
@@ -12,8 +11,8 @@ final class DefaultSimpleHttpClient implements SimpleHttpClient {
   final JsonDecoderFunction _jsonDecoder;
   final JsonEncoderFunction _jsonEncoder;
 
-  /// Constructs a [DefaultSimpleHttpClient].
-  DefaultSimpleHttpClient({
+  /// Constructs a [_DefaultSimpleHttpClient].
+  _DefaultSimpleHttpClient({
     required http.Client client,
     required Duration? timeout,
     required List<RequestInterceptor> requestInterceptors,

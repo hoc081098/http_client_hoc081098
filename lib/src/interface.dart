@@ -60,7 +60,7 @@ sealed class SimpleHttpClient {
     JsonDecoderFunction jsonDecoder = jsonDecode,
     JsonEncoderFunction jsonEncoder = jsonEncode,
   }) =>
-      DefaultSimpleHttpClient(
+      _DefaultSimpleHttpClient(
         client: client,
         timeout: timeout,
         requestInterceptors: requestInterceptors,
