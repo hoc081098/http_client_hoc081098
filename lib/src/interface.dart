@@ -1,14 +1,15 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:cancellation_token_hoc081098/cancellation_token_hoc081098.dart';
 import 'package:http/http.dart' as http;
 import 'package:meta/meta.dart';
 
-import 'default_simple_http_client.dart';
 import 'exception.dart';
 
-import 'dart:typed_data';
+part 'default_simple_http_client.dart';
 
 /// If one or more request interceptors are set, they will be called before the
 /// request is sent to allow for modification of the original request.
@@ -33,7 +34,7 @@ typedef JsonEncoderFunction = String Function(Object object);
 
 /// TODO(docs)
 @sealed
-abstract class SimpleHttpClient {
+sealed class SimpleHttpClient {
   /// JSON utf8 content type.
   static const jsonUtf8ContentType = 'application/json; charset=utf-8';
 

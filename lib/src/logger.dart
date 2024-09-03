@@ -8,7 +8,7 @@ import 'interface.dart';
 ///
 /// The format of the logs created by this class should not be considered stable and may
 /// change slightly between releases. If you need a stable logging format, use your own interceptor.
-class SimpleLoggingInterceptor {
+final class SimpleLoggingInterceptor {
   /// The logger used to log messages.
   final SimpleLogger logger;
 
@@ -89,7 +89,7 @@ enum SimpleLogLevel {
 }
 
 /// The logger that logs request and response information.
-class SimpleLogger {
+final class SimpleLogger {
   /// Default logger tag.
   static const defaultTag = '🚀 [SIMPLE-HTTP-CLIENT] ';
   static const _indent = '  • ';

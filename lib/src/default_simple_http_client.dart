@@ -1,18 +1,8 @@
-import 'dart:async';
-import 'dart:convert';
-import 'dart:io';
-import 'dart:typed_data';
-
-import 'package:cancellation_token_hoc081098/cancellation_token_hoc081098.dart';
-import 'package:http/http.dart' as http;
-import 'package:meta/meta.dart';
-
-import 'exception.dart';
-import 'interface.dart';
+part of 'interface.dart';
 
 /// Default implementation of [SimpleHttpClient].
 @internal
-class DefaultSimpleHttpClient implements SimpleHttpClient {
+final class DefaultSimpleHttpClient implements SimpleHttpClient {
   final http.Client _client;
   final Duration? _timeout;
 
