@@ -3,6 +3,7 @@
 Simple and powerful HTTP client for Flutter and Dart application.
 
 [![codecov](https://codecov.io/gh/hoc081098/http_client_hoc081098/graph/badge.svg?token=TNspe4aF8b)](https://codecov.io/gh/hoc081098/http_client_hoc081098)
+[![Hits](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2Fhoc081098%2Fhttp_client_hoc081098&count_bg=%239858E5&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=hits&edge_flat=false)](https://hits.seeyoufarm.com)
 
 ```dart
 import 'dart:io';
