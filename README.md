@@ -9,7 +9,7 @@ Simple and powerful HTTP client for Flutter and Dart application.
 import 'dart:io';
 
 import 'package:http/http.dart' as http;
-import 'package:http/retry.dart' as httpRetry;
+import 'package:http/retry.dart' as http_retry;
 import 'package:http_client_hoc081098/http_client_hoc081098.dart';
 
 import 'user.dart';
@@ -24,7 +24,7 @@ void main() async {
     ),
   );
 
-  final innerClient = httpRetry.RetryClient(
+  final innerClient = http_retry.RetryClient(
     http.Client(),
     retries: 3,
     when: (response) {
