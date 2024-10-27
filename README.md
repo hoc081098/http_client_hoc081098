@@ -9,6 +9,7 @@ Simple and powerful HTTP client for Flutter and Dart application.
 import 'dart:io';
 
 import 'package:http/http.dart' as http;
+import 'package:http/retry.dart' as httpRetry;
 import 'package:http_client_hoc081098/http_client_hoc081098.dart';
 
 import 'user.dart';
@@ -23,11 +24,30 @@ void main() async {
     ),
   );
 
+  final innerClient = httpRetry.RetryClient(
+    http.Client(),
+    retries: 3,
+    when: (response) {
+      print(
+          '[RetryClient] Checking response: request=${response.request} statusCode=${response.statusCode}');
+      print('-' * 128);
+      return response.statusCode == HttpStatus.unauthorized;
+    },
+    onRetry: (request, response, retryCount) async {
+      print(
+          '[RetryClient] Retrying request: request=$request, response=$response, retryCount=$retryCount');
+      // Simulate refreshing token
+      await Future<void>.delayed(const Duration(seconds: 1));
+      print('-' * 128);
+    },
+  );
+
   final client = SimpleHttpClient(
-    client: http.Client(),
+    client: innerClient,
     timeout: const Duration(seconds: 10),
     requestInterceptors: [
       (request) async {
+        print('[requestInterceptors] request=$request');
         await Future<void>.delayed(const Duration(milliseconds: 100));
 
         final token = 'hoc081098';
