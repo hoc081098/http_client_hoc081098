@@ -20,7 +20,7 @@ topics:
 dependencies:
   http: ^1.1.0
   meta: ^1.7.0
-  rxdart_ext: ^0.3.0
+  rxdart_ext: ^0.4.0
   cancellation_token_hoc081098: ^2.0.0
 
 dev_dependencies:
